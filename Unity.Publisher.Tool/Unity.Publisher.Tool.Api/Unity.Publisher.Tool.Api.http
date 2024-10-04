@@ -1,0 +1,6 @@
+@Unity.Publisher.Tool.Api_HostAddress = http://localhost:5219
+
+POST {{Unity.Publisher.Tool.Api_HostAddress}}/schedule/notifications/
+Accept: application/json
+
+###
