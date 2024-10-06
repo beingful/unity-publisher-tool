@@ -1,0 +1,104 @@
+trigger:
+  batch: true
+  branches:
+    include:
+      - main
+
+pr:
+  branches:
+    include:
+      - main
+
+pool:
+  vmImage: ubuntu-latest
+
+variables:
+  BUILD_CONFIGURATION: Release
+  DOCKER_BUILD_CONTEXT: ./Unity.Publisher.Tool
+  BUILD_ID: $(Build.BuildId)
+  REPOSITORY: hannakasai002/unity-publisher-tool
+  IMAGE: hannakasai002/unity-publisher-tool
+  FINAL_IMAGE_TAG: latest
+  IS_PR_RUN: $[eq(variables['Build.Reason'], 'PullRequest')]
+
+steps:
+- task: Docker@2
+  displayName: Log into a docker registry
+  inputs:
+    containerRegistry: 'docker-hub'
+    command: 'login'
+    addPipelineData: false
+    addBaseImageData: false
+
+- task: Docker@2
+  displayName: Restore dependencies
+  inputs:
+    repository: $(REPOSITORY)
+    command: 'build'
+    arguments: '--force-rm -t $(IMAGE)'
+    Dockerfile: '**/restore.Dockerfile'
+    buildContext: $(DOCKER_BUILD_CONTEXT)
+    tags: 'restore-$(BUILD_ID)'
+    addPipelineData: false
+    addBaseImageData: false
+
+- task: Docker@2
+  displayName: Build the solution
+  inputs:
+    repository: $(REPOSITORY)
+    command: 'build'
+    arguments: '--force-rm -t $(IMAGE) --build-arg IMAGE --build-arg BUILD_ID --build-arg BUILD_CONFIGURATION'
+    Dockerfile: '**/build.Dockerfile'
+    buildContext: $(DOCKER_BUILD_CONTEXT)
+    tags: 'build-$(BUILD_ID)'
+    addPipelineData: false
+    addBaseImageData: false
+
+- task: Docker@2
+  displayName: Publish the API
+  inputs:
+    repository: $(REPOSITORY)
+    command: 'build'
+    arguments: '--force-rm -t $(IMAGE) --build-arg IMAGE --build-arg BUILD_ID --build-arg BUILD_CONFIGURATION'
+    Dockerfile: '**/publish.Dockerfile'
+    buildContext: $(DOCKER_BUILD_CONTEXT)
+    tags: 'publish-$(BUILD_ID)'
+    addPipelineData: false
+    addBaseImageData: false
+  condition: and(succeeded(), eq(variables.IS_PR_RUN, false))
+
+- task: Docker@2
+  displayName: Build the final image
+  inputs:
+    repository: $(REPOSITORY)
+    command: 'build'
+    arguments: '--force-rm -t $(IMAGE) --build-arg IMAGE --build-arg BUILD_ID'
+    Dockerfile: '**/final.Dockerfile'
+    buildContext: $(DOCKER_BUILD_CONTEXT)
+    tags: |
+      $(FINAL_IMAGE_TAG)
+      build-$(BUILD_ID)
+    addPipelineData: false
+    addBaseImageData: false
+  condition: and(succeeded(), eq(variables.IS_PR_RUN, false))
+
+- task: Docker@2
+  displayName: Pull the image
+  inputs:
+    containerRegistry: 'docker-hub'
+    repository: $(REPOSITORY)
+    command: 'push'
+    tags: |
+      $(FINAL_IMAGE_TAG)
+      build-$(BUILD_ID)
+    addPipelineData: false
+    addBaseImageData: false
+  condition: and(succeeded(), eq(variables.IS_PR_RUN, false))
+
+- task: Docker@2
+  displayName: Log out of a docker registry
+  inputs:
+    containerRegistry: 'docker-hub'
+    command: 'logout'
+    addPipelineData: false
+    addBaseImageData: false
