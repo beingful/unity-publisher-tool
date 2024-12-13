@@ -10,12 +10,21 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Flurl.Http" Version="4.0.2" />
-    <PackageReference Include="Flurl.Http.Newtonsoft" Version="0.9.1" />
+    <PackageReference Include="Autofac" Version="8.1.1" />
+    <PackageReference Include="Autofac.Extensions.DependencyInjection" Version="10.0.0" />
     <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="8.0.8" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="13.0.3" />
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Unity.Publisher.Tool.App\Unity.Publisher.Tool.App.csproj" />
+    <ProjectReference Include="..\Unity.Publisher.Tool.Db\Unity.Publisher.Tool.Infrastructure.csproj" />
+    <ProjectReference Include="..\Unity.Publisher.Tool.Domain\Unity.Publisher.Tool.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Configuration\Models\" />
   </ItemGroup>
 
 </Project>
