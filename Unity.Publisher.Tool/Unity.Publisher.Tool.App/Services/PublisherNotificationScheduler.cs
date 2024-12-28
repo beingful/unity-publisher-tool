@@ -1,31 +1,26 @@
 ﻿using Unity.Publisher.Tool.App.Models;
-using static Unity.Publisher.Tool.App.Models.PublisherEvents;
+using Unity.Publisher.Tool.Domain.Data;
 
 namespace Unity.Publisher.Tool.App.Services;
 
 public class PublisherNotificationScheduler
 {
-    private readonly Dictionary<PublisherEvent, IEventNotificationScheduler> _eventNotificationSchedulers;
+    private readonly IKeyedProvider<PublisherEvent, IPublisherEventNotificationScheduler> _schedulers;
 
-    public PublisherNotificationScheduler(
-        IEventNotificationScheduler<StatementUpdate> statementUpdateScheduler,
-        IEventNotificationScheduler<MonthlyReport> monthlyReportScheduler)
+    public PublisherNotificationScheduler(IKeyedProvider<PublisherEvent, IPublisherEventNotificationScheduler> schedulers)
     {
-        _eventNotificationSchedulers = new Dictionary<PublisherEvent, IEventNotificationScheduler>()
-        {
-            { PublisherEvent.StatementUpdate, statementUpdateScheduler },
-            { PublisherEvent.MonthlyReport, monthlyReportScheduler }
-        };
+        _schedulers = schedulers;
     }
 
-    public async Task ScheduleAsync(PublisherEvent[] events, DataTransferEndpoints data)
+    public async Task ScheduleAsync(PublisherEvent[] events, NotificationJobData data)
     {
         Task[] scheduleTasks = new Task[events.Length];
 
         for (int i = 0; i < scheduleTasks.Length; ++i)
         {
-            scheduleTasks[i] = _eventNotificationSchedulers[events[i]]
-                .ScheduleAsync(data);
+            IPublisherEventNotificationScheduler scheduler = _schedulers.Provide(events[i]);
+
+            scheduleTasks[i] = scheduler.ScheduleAsync(data);
         }
 
         await Task.WhenAll(scheduleTasks);
@@ -37,8 +32,9 @@ public class PublisherNotificationScheduler
 
         for (int i = 0; i < unscheduleTasks.Length; ++i)
         {
-            unscheduleTasks[i] = _eventNotificationSchedulers[events[i]]
-                .UnscheduleAsync();
+            IPublisherEventNotificationScheduler scheduler = _schedulers.Provide(events[i]);
+
+            unscheduleTasks[i] = scheduler.UnscheduleAsync();
         }
 
         await Task.WhenAll(unscheduleTasks);

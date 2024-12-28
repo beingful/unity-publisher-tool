@@ -1,5 +1,4 @@
-﻿using StackExchange.Redis;
-using System.Text.Json;
+﻿using System.Text.Json;
 
 namespace Unity.Publisher.Tool.Infrastructure.Db.Redis;
 

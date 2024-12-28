@@ -1,4 +1,4 @@
-﻿using Unity.Publisher.Tool.Domain.Data.Providers;
+﻿using Unity.Publisher.Tool.Domain.Data;
 
 namespace Unity.Publisher.Tool.Infrastructure.Api.State;
 

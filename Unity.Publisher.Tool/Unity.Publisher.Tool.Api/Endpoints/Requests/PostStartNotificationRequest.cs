@@ -5,7 +5,9 @@ namespace Unity.Publisher.Tool.Endpoints.Requests;
 
 public class PostStartNotificationRequest
 {
-    public required PublisherEvent[] Events;
+    public required PublisherEvent[] Events { get; init; }
+
+    public required PublisherEvent Event { get; init; }
 
     public required Sender Sender { get; init; }
 

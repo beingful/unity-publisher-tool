@@ -1,6 +1,4 @@
 ﻿using StackExchange.Redis;
-using Unity.Publisher.Tool.Infrastructure.Db.Entities;
-using Unity.Publisher.Tool.Infrastructure.Db.Redis.Models;
 
 namespace Unity.Publisher.Tool.Infrastructure.Db.Redis.Repositories;
 
@@ -19,46 +17,46 @@ public class BaseRedisDbRepository<TOperationType> : IStorage
         return new RedisDbTransactionRepository(new RedisDbTransaction(_redisDb.Transaction));
     }
 
-    public async Task<TValue> GetAsync<TValue>(string id) where TValue : BaseEntity
+    public async Task<TModel> GetAsync<TModel>(string id) where TModel : class
     {
-        TValue? result = await GetValueOrDefaultAsync<TValue>(id);
+        TModel? result = await GetValueOrDefaultAsync<TModel>(id);
 
         return result!;
     }
 
-    public async Task<TValue?> GetValueOrDefaultAsync<TValue>(string id) where TValue : BaseEntity
+    public async Task<TModel?> GetValueOrDefaultAsync<TModel>(string id) where TModel : class
     {
-        string key = GetKey<TValue>(id);
+        RedisKey key = GetKey<TModel>(id);
 
-        return await _redisDb.GetAsync<TValue>(key);
+        return await _redisDb.GetAsync<TModel>(key);
     }
 
-    public async Task UpdateAsync<TValue>(TValue value) where TValue : BaseEntity
+    public async Task UpdateAsync<TModel>(Entity<TModel> entity)
     {
-        await InsertAsync(value);
+        await InsertAsync(entity);
     }
 
-    public async Task UpsertAsync<TValue>(TValue value) where TValue : BaseEntity
+    public async Task UpsertAsync<TModel>(Entity<TModel> entity)
     {
-        await InsertAsync(value);
+        await InsertAsync(entity);
     }
 
-    public async Task InsertAsync<TValue>(TValue value) where TValue : BaseEntity
+    public async Task InsertAsync<TModel>(Entity<TModel> entity)
     {
-        string key = GetKey<TValue>(value.Id);
+        RedisKey key = GetKey<TModel>(entity.Id);
 
-        await _redisDb.SetAsync(new RedisData(key, value!));
+        await _redisDb.SetAsync(new RedisData(key, entity.Data!));
     }
 
-    public async Task RemoveAsync<TValue>(string id) where TValue : BaseEntity
+    public async Task RemoveAsync<TModel>(string id)
     {
-        string key = GetKey<TValue>(id);
+        RedisKey key = GetKey<TModel>(id);
 
         await _redisDb.RemoveAsync(key);
     }
 
-    private string GetKey<TValue>(string id) where TValue : BaseEntity
+    private RedisKey GetKey<TModel>(string id)
     {
-        return $"{typeof(TValue).Name.Replace("Entity", string.Empty)}:{id}".ToUpper();
+        return new RedisKey(key: $"{typeof(TModel).Name}:{id}".ToLower());
     }
 }

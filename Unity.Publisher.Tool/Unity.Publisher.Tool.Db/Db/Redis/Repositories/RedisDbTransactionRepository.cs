@@ -1,6 +1,4 @@
-﻿using StackExchange.Redis;
-
-namespace Unity.Publisher.Tool.Infrastructure.Db.Redis.Repositories;
+﻿namespace Unity.Publisher.Tool.Infrastructure.Db.Redis.Repositories;
 
 public class RedisDbTransactionRepository : ITransaction
 {

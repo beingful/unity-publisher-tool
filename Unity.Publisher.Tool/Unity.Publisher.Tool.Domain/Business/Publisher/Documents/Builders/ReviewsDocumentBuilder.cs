@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Formatting;
+﻿using Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Formatting;
 using Unity.Publisher.Tool.Domain.Business.Publisher.Models;
 
 namespace Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Builders;
@@ -7,60 +6,39 @@ namespace Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Builders;
 public class ReviewsDocumentBuilder : IDocumentBuilder<Reviews>
 {
     private readonly IDocumentBuilder<Review> _contentBuilder;
-    private readonly IFormatter<Reviews> _formatter;
 
-    public ReviewsDocumentBuilder(
-        IDocumentBuilder<Review> contentBuilder,
-        IFormatter<Reviews> formatter)
+    public ReviewsDocumentBuilder(IDocumentBuilder<Review> contentBuilder)
     {
         _contentBuilder = contentBuilder;
-        _formatter = formatter;
     }
 
-    public string Build(Reviews reviews, BuildSettings? settings = null)
+    public IDocument Build(Reviews reviews)
     {
-        if (settings.HasValue)
-        {
-            AdjustFormatting(settings.Value);
-        }
+        Content content = new(
+            text: Content(),
+            formatting: new DocumentFormatting());
 
-        StringBuilder document = new();
+        IDocument document = Document.CreateParagraph(content);
 
-        AppendHeader(document);
-        AppendContent(reviews, document);
+        InnerDocuments(reviews).ForEach(inner => document.AddInner(inner));
 
-        return document.ToString();
+        return document;
     }
 
-    public void AdjustFormatting(BuildSettings settings)
+    private string Content()
     {
-        _formatter.SetMargin(settings.Margin);
+        return "NEW REVIEWS:\n";
     }
 
-    internal void AppendHeader(StringBuilder document, BuildSettings? settings = null)
+    internal List<IDocument> InnerDocuments(Reviews reviews)
     {
-        if (settings.HasValue)
-        {
-            AdjustFormatting(settings.Value);
-        }
-
-        document.AppendLine(value: _formatter.FormatLine("NEW REVIEWS:\n"));
-    }
-
-    internal void AppendContent(Reviews reviews, StringBuilder document)
-    {
-        string separator = _formatter.ContentSeparator;
-
-        _contentBuilder.AdjustFormatting(new BuildSettings
-        {
-            Margin = _formatter.Options.Padding + 1
-        });
+        List<IDocument> documents = new(reviews.Count);
 
         for (int i = 0; i < reviews.Count; ++i)
         {
-            document
-                .AppendLine(value: _contentBuilder.Build(reviews[i]))
-                .AppendLine(value: separator);
+            documents.Add(_contentBuilder.Build(reviews[i]));
         }
+
+        return documents;
     }
 }

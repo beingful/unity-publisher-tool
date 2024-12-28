@@ -1,7 +1,10 @@
 ﻿using Autofac;
+using Hangfire;
+using Hangfire.Storage;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
-using Unity.Publisher.Tool.Domain.Data.Providers;
+using Unity.Publisher.Tool.Domain.Business.Publisher.Models;
+using Unity.Publisher.Tool.Domain.Data;
 using Unity.Publisher.Tool.Infrastructure.Api.PublisherApi;
 using Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.LogIn;
 using Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Options;
@@ -16,6 +19,8 @@ using Unity.Publisher.Tool.Infrastructure.Notification.Emails;
 using Unity.Publisher.Tool.Infrastructure.Notification.Emails.Models;
 using Unity.Publisher.Tool.Infrastructure.Scheduling;
 using Unity.Publisher.Tool.Infrastructure.Scheduling.Hangfire;
+using Unity.Publisher.Tool.Infrastructure.Scheduling.Storage;
+using Unity.Publisher.Tool.Infrastructure.Scheduling.Workers;
 using IHttpClientFactory = Unity.Publisher.Tool.Infrastructure.Http.Clients.IHttpClientFactory;
 
 namespace Unity.Publisher.Tool.Dependencies;
@@ -30,7 +35,8 @@ public static class InfrastructureServiceInjection
 
         container
             .RegisterType<EmailNotificator>()
-            .As<INotificator<EmailNotification>>();
+            .As<INotificator<EmailNotification>>()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<HttpClientFactory>()
@@ -43,9 +49,9 @@ public static class InfrastructureServiceInjection
             .InstancePerLifetimeScope();
 
         container
-            .Register<KeyedProvider<ISessionManager>>((context) =>
+            .Register<TypeBasedProvider<ISessionManager>>(context =>
             {
-                return new KeyedProvider<ISessionManager>(
+                return new TypeBasedProvider<ISessionManager>(
                     components: new Dictionary<Type, ISessionManager>
                     {
                         {
@@ -65,9 +71,9 @@ public static class InfrastructureServiceInjection
             .InstancePerLifetimeScope();
 
         container
-            .Register<KeyedProvider<ILogInManager>>((context) =>
+            .Register<TypeBasedProvider<ILogInManager>>(context =>
             {
-                return new KeyedProvider<ILogInManager>(
+                return new TypeBasedProvider<ILogInManager>(
                     components: new Dictionary<Type, ILogInManager>
                     {
                         {
@@ -87,11 +93,21 @@ public static class InfrastructureServiceInjection
 
         container
             .RegisterType<PublisherApi>()
-            .AsImplementedInterfaces()
+            .As<IDataService<PublisherInfo>>()
+            .As<IDataService<Revenue>>()
+            .As<IDataService<Assets>>()
+            .As<IDataService<Sales>>()
+            .As<IDataService<Reviews>>()
+            .As<IDataService<Downloads>>()
+            .InstancePerBackgroundJob();
+
+        container
+            .RegisterType<PublisherApi>()
+            .As<IStartable>()
             .InstancePerLifetimeScope();
 
         container
-            .Register<ConnectionMultiplexer>((context) =>
+            .Register<ConnectionMultiplexer>(context =>
             {
                 IConfiguration configuration = context.Resolve<IConfiguration>();
 
@@ -111,13 +127,31 @@ public static class InfrastructureServiceInjection
             .InstancePerLifetimeScope();
 
         container
-            .RegisterType<RedisDbRepository>()
-            .As<IStorage>()
+            .RegisterType<Scheduler>()
+            .As<IScheduler>()
             .InstancePerLifetimeScope();
 
         container
-            .RegisterType<Scheduler>()
-            .As<IScheduler>();
+            .RegisterType<DataDrivenScheduler>()
+            .As<IDataDrivenScheduler>()
+            .InstancePerLifetimeScope();
+
+        container
+            .Register<IStorageConnection>(context =>
+            {
+                return JobStorage.Current.GetConnection();
+            })
+            .InstancePerLifetimeScope();
+
+        container
+            .RegisterType<ScheduleStorage>()
+            .As<IScheduleStorage>()
+            .InstancePerLifetimeScope();
+
+        container
+            .RegisterGeneric(typeof(ScheduleWorker<>))
+            .As(typeof(IScheduleWorker<>))
+            .InstancePerBackgroundJob();
 
         return container;
     }

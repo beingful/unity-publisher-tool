@@ -5,28 +5,19 @@ namespace Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Builders;
 
 public class ReviewDocumentBuilder : IDocumentBuilder<Review>
 {
-    private readonly IFormatter<Review> _formatter;
-
-    public ReviewDocumentBuilder(IFormatter<Review> formatter)
+    public IDocument Build(Review review)
     {
-        _formatter = formatter;
+        Content content = new(
+            text: Content(review),
+            formatting: new DocumentFormatting());
+
+        return Document.CreateParagraph(content);
     }
 
-    public string Build(Review review, BuildSettings? settings = null)
+    public string Content(Review review)
     {
-        if (settings.HasValue)
-        {
-            AdjustFormatting(settings.Value);
-        }
-
-        return _formatter.FormatLines(
-            $"Rating: {review.Rating}",
-            $"Subject: {review.Subject}",
-            $"Body: {review.Body}");
-    }
-
-    public void AdjustFormatting(BuildSettings settings)
-    {
-        _formatter.SetMargin(settings.Margin);
+        return $"Rating: {review.Rating}" +
+            $"Subject: {review.Subject}" +
+            $"Body: {review.Body}";
     }
 }

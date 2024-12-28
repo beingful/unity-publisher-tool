@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Formatting;
+﻿using Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Formatting;
 using Unity.Publisher.Tool.Domain.Business.Publisher.Events.Models;
 using Unity.Publisher.Tool.Domain.Business.Publisher.Models;
 
@@ -8,55 +7,43 @@ namespace Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Builders;
 public class PublisherStatementDocumentBuilder : IDocumentBuilder<PublisherStatement>
 {
     private readonly IDocumentBuilder<AssetStatement> _contentBuilder;
-    private readonly IFormatter<PublisherStatement> _formatter;
 
-    public PublisherStatementDocumentBuilder(
-        IDocumentBuilder<AssetStatement> contentBuilder,
-        IFormatter<PublisherStatement> formatter)
+    public PublisherStatementDocumentBuilder(IDocumentBuilder<AssetStatement> contentBuilder)
     {
         _contentBuilder = contentBuilder;
-        _formatter = formatter;
     }
 
-    public string Build(PublisherStatement statement, BuildSettings? settings = null)
+    public IDocument Build(PublisherStatement statement)
     {
-        if (settings.HasValue)
+        Title title = new(name: "StatementUpdate", description: "Updates");
+
+        Content content = new(
+            text: Content(),
+            formatting: new DocumentFormatting(
+                options: new FormattingOptions { Separator = '-' }));
+
+        IDocument document = Document.Create(title, content);
+
+        InnerDocuments(statement.AssetsStatements)
+            .ForEach(inner => document.AddInner(inner));
+
+        return document;
+    }
+
+    internal string Content()
+    {
+        return "LATEST UPDATES:\n";
+    }
+
+    private List<IDocument> InnerDocuments(AssetStatement[] assetStatements)
+    {
+        List<IDocument> documents = new(assetStatements.Length);
+
+        foreach (AssetStatement statement in assetStatements)
         {
-            AdjustFormatting(settings.Value);
+            documents.Add(_contentBuilder.Build(statement));
         }
 
-        StringBuilder document = new();
-
-        AppendHead(statement, document);
-        AppendContent(statement.AssetsStatements, document);
-
-        return document.ToString();
-    }
-
-    public void AdjustFormatting(BuildSettings settings)
-    {
-        _formatter.SetMargin(settings.Margin);
-    }
-
-    internal void AppendHead(PublisherStatement report, StringBuilder document)
-    {
-        document.AppendLine(_formatter.FormatLines("LATEST UPDATES:\n"));
-    }
-
-    private void AppendContent(AssetStatement[] assetStatements, StringBuilder document)
-    {
-        string separator = _formatter.ContentSeparator;
-
-        _contentBuilder.AdjustFormatting(new BuildSettings
-        {
-            Margin = _formatter.Options.Padding + 1
-        });
-
-        for (int i = 0; i < assetStatements.Length; ++i)
-        {
-            document
-                .AppendLine(value: _contentBuilder.Build(assetStatements[i]))
-                .AppendLine(value: separator);
-        }
+        return documents;
     }
 }

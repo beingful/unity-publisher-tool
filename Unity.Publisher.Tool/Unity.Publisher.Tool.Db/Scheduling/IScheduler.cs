@@ -1,4 +1,5 @@
 ﻿using Unity.Publisher.Tool.Infrastructure.Scheduling.Models;
+using Unity.Publisher.Tool.Infrastructure.Scheduling.Workers;
 
 namespace Unity.Publisher.Tool.Infrastructure.Scheduling;
 

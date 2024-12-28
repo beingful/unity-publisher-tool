@@ -1,4 +1,4 @@
-﻿using System.Text;
+﻿using Unity.Publisher.Tool.Domain.Business.Publisher.Documents;
 using Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Builders;
 using Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Formatting;
 using Unity.Publisher.Tool.Domain.Business.Publisher.Models;
@@ -8,57 +8,36 @@ namespace Unity.Publisher.Tool.Domain.Business.Publisher.Reports.Documents.Build
 public class PublisherReportDocumentBuilder : IDocumentBuilder<PublisherReport>
 {
     private readonly IDocumentBuilder<PublisherStatement> _contentBuilder;
-    private readonly IFormatter<PublisherStatement> _formatter;
 
-    public PublisherReportDocumentBuilder(
-        IDocumentBuilder<PublisherStatement> contentBuilder,
-        IFormatter<PublisherStatement> formatter)
+    public PublisherReportDocumentBuilder(IDocumentBuilder<PublisherStatement> contentBuilder)
     {
         _contentBuilder = contentBuilder;
-        _formatter = formatter;
     }
 
-    public string Build(PublisherReport report, BuildSettings? settings = null)
+    public IDocument Build(PublisherReport report)
     {
-        if (settings.HasValue)
-        {
-            AdjustFormatting(settings.Value);
-        }
+        Title title = new(name: "Report", description: "Report");
 
-        StringBuilder document = new();
+        Content content = new(
+            text: Content(report),
+            formatting: new DocumentFormatting());
 
-        AppendHead(report, document);
-        AppendContent(report.Statement, document);
-
-        return document.ToString();
+        return Document.Create(title, content)
+            .AddInner(NestedDocument(report.Statement));
     }
 
-    public void AdjustFormatting(BuildSettings settings)
+    private string Content(PublisherReport report)
     {
-        _formatter.SetMargin(settings.Margin);
+        return "REPORT\n\n" +
+            $"Publisher: {report.Publisher.Name}" +
+            $"Publisher rating: {report.Publisher.Rating.Average}" +
+            $"This month revenue: {report.Revenue.ForPeriod}" +
+            $"Total revenue: {report.Revenue.Total}" +
+            $"Month reported: {report.Month.Name}\n";
     }
 
-    private void AppendHead(PublisherReport report, StringBuilder document)
+    private IDocument NestedDocument(PublisherStatement statement)
     {
-        document.AppendLine(
-            value: _formatter.FormatLines(
-                "REPORT\n",
-                $"Publisher: {report.Publisher.Name}",
-                $"Publisher rating: {report.Publisher.Rating.Average}",
-                $"This month revenue: {report.Revenue.ForPeriod}",
-                $"Total revenue: {report.Revenue.Total}",
-                $"Month reported: {report.Month.Name}"));
-    }
-
-    private void AppendContent(PublisherStatement statement, StringBuilder document)
-    {
-        string separator = _formatter.ContentSeparator;
-
-        document
-            .AppendLine(_contentBuilder.Build(statement, new BuildSettings
-            {
-                Margin = _formatter.Options.Padding + 1
-            }))
-            .AppendLine(separator);
+        return _contentBuilder.Build(statement);
     }
 }

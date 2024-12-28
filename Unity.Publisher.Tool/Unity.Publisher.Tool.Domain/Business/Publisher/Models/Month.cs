@@ -14,6 +14,11 @@ public class Month
         Name = new DateTimeFormatInfo().GetMonthName(order);
     }
 
+    public static Month First()
+    {
+        return new Month(order: 1);
+    }
+
     public Month Previous()
     {
         int outOfBoundFactor = (Order - 1) == 0 ? 1 : 0;

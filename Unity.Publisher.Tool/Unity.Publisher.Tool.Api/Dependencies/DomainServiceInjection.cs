@@ -1,11 +1,10 @@
 ﻿using Autofac;
-using Unity.Publisher.Tool.Domain.Data.Providers;
 using Unity.Publisher.Tool.Domain.Data;
 using Unity.Publisher.Tool.Domain.Business.Publisher.Models;
 using Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Builders;
-using Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Formatting;
 using Unity.Publisher.Tool.Domain.Business.Publisher.Events.Models;
 using Unity.Publisher.Tool.Domain.Business.Publisher.Comparers;
+using Hangfire;
 
 namespace Unity.Publisher.Tool.Dependencies;
 
@@ -22,72 +21,75 @@ public static class DomainServiceInjection
 
         container
             .RegisterType<PublisherStatementComparer>()
-            .As<IDataComparer<PublisherStatement>>();
+            .As<IDataComparer<PublisherStatement>>()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<AssetStatementComparer>()
-            .As<IDataComparer<AssetStatement>>();
+            .As<IDataComparer<AssetStatement>>()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<SalesComparer>()
-            .As<IDataComparer<Sales>>();
+            .As<IDataComparer<Sales>>()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<SaleComparer>()
-            .As<IDataComparer<Sale>>();
+            .As<IDataComparer<Sale>>()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<ReviewsComparer>()
-            .As<IDataComparer<Reviews>>();
+            .As<IDataComparer<Reviews>>()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<DownloadComparer>()
-            .As<IDataComparer<Download>>();
-
-        container
-            .RegisterType<FormatterProvider>()
-            .As<IKeyedProvider<Type, IFormatter>>()
-            .SingleInstance();
-
-        container
-            .RegisterGeneric(typeof(DynamicFormatter<>))
-            .As(typeof(IFormatter<>))
-            .InstancePerLifetimeScope();
+            .As<IDataComparer<Download>>()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<PublisherStatementDocumentBuilder>()
             .As<IDocumentBuilder<PublisherStatement>>()
-            .InstancePerLifetimeScope();
+            .InstancePerLifetimeScope()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<AssetStatementDocumentBuilder>()
             .As<IDocumentBuilder<AssetStatement>>()
-            .InstancePerLifetimeScope();
+            .InstancePerLifetimeScope()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<SalesDocumentBuilder>()
             .As<IDocumentBuilder<Sales>>()
-            .InstancePerLifetimeScope();
+            .InstancePerLifetimeScope()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<SaleDocumentBuilder>()
             .As<IDocumentBuilder<Sale>>()
-            .InstancePerLifetimeScope();
+            .InstancePerLifetimeScope()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<ReviewsDocumentBuilder>()
             .As<IDocumentBuilder<Reviews>>()
-            .InstancePerLifetimeScope();
+            .InstancePerLifetimeScope()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<ReviewDocumentBuilder>()
             .As<IDocumentBuilder<Review>>()
-            .InstancePerLifetimeScope();
+            .InstancePerLifetimeScope()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<DownloadDocumentBuilder>()
             .As<IDocumentBuilder<Download>>()
-            .InstancePerLifetimeScope();
+            .InstancePerLifetimeScope()
+            .InstancePerBackgroundJob();
 
         return container;
     }

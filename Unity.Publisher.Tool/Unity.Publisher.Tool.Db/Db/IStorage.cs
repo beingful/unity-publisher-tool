@@ -1,22 +1,18 @@
-﻿using Unity.Publisher.Tool.Infrastructure.Db.Entities;
-
-namespace Unity.Publisher.Tool.Infrastructure.Db;
+﻿namespace Unity.Publisher.Tool.Infrastructure.Db;
 
 public interface IStorage
 {
     ITransaction CreateTransaction();
 
-    Task<TValue> GetAsync<TValue>(string id) where TValue : BaseEntity;
+    Task<TModel> GetAsync<TModel>(string id) where TModel : class;
 
-    Task<TValue?> GetValueOrDefaultAsync<TValue>(string id) where TValue : BaseEntity;
+    Task<TModel?> GetValueOrDefaultAsync<TModel>(string id) where TModel : class;
 
-    Task InsertAsync<TValue>(TValue value) where TValue : BaseEntity;
+    Task UpdateAsync<TModel>(Entity<TModel> entity);
 
-    Task UpdateAsync<TValue>(TValue value) where TValue : BaseEntity;
+    Task UpsertAsync<TModel>(Entity<TModel> entity);
 
-    Task UpsertAsync<TValue>(TValue value) where TValue : BaseEntity;
+    Task InsertAsync<TModel>(Entity<TModel> entity);
 
-    Task RemoveAsync<TValue>(string id) where TValue : BaseEntity;
-
-    //Task DoAllAsync(params Func<IDbRepository, Task>[] tasks);
+    Task RemoveAsync<TModel>(string id);
 }

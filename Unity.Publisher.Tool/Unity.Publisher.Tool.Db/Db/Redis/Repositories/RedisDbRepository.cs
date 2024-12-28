@@ -1,5 +1,4 @@
 ﻿using StackExchange.Redis;
-using Unity.Publisher.Tool.Infrastructure.Db.Entities;
 
 namespace Unity.Publisher.Tool.Infrastructure.Db.Redis.Repositories;
 
@@ -10,7 +9,7 @@ public class RedisDbRepository : IStorage
     public RedisDbRepository(ConnectionMultiplexer dbConnection)
     {
         _baseRepository = new BaseRedisDbRepository<IDatabaseAsync>(
-            new RedisDb(dbConnection));
+            redisDb: new RedisDb(dbConnection));
     }
 
     public ITransaction CreateTransaction()
@@ -18,33 +17,33 @@ public class RedisDbRepository : IStorage
         return _baseRepository.CreateTransaction();
     }
 
-    public async Task<TValue> GetAsync<TValue>(string id) where TValue : BaseEntity
+    public async Task<TModel> GetAsync<TModel>(string id) where TModel : class
     {
-        return await _baseRepository.GetAsync<TValue>(id);
+        return await _baseRepository.GetAsync<TModel>(id);
     }
 
-    public async Task<TValue?> GetValueOrDefaultAsync<TValue>(string id) where TValue : BaseEntity
+    public async Task<TModel?> GetValueOrDefaultAsync<TModel>(string id) where TModel : class
     {
-        return await _baseRepository.GetValueOrDefaultAsync<TValue>(id);
+        return await _baseRepository.GetValueOrDefaultAsync<TModel>(id);
     }
 
-    public async Task UpdateAsync<TValue>(TValue value) where TValue : BaseEntity
+    public async Task UpdateAsync<TModel>(Entity<TModel> value)
     {
         await _baseRepository.UpdateAsync(value);
     }
 
-    public async Task UpsertAsync<TValue>(TValue value) where TValue : BaseEntity
+    public async Task UpsertAsync<TModel>(Entity<TModel> value)
     {
         await _baseRepository.UpsertAsync(value);
     }
 
-    public async Task InsertAsync<TValue>(TValue value) where TValue : BaseEntity
+    public async Task InsertAsync<TModel>(Entity<TModel> value)
     {
         await _baseRepository.InsertAsync(value);
     }
 
-    public async Task RemoveAsync<TValue>(string id) where TValue : BaseEntity
+    public async Task RemoveAsync<TModel>(string id)
     {
-        await _baseRepository.RemoveAsync<TValue>(id);
+        await _baseRepository.RemoveAsync<TModel>(id);
     }
 }

@@ -20,4 +20,9 @@ public class TriggerTime
     {
         return new TriggerTime(new TimePeriod(days, hours, minutes), Trigger.Interval);
     }
+
+    public string ToCrone()
+    {
+        return base.ToString();
+    }
 }

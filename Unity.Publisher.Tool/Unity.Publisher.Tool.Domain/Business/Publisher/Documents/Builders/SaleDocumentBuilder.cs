@@ -5,30 +5,18 @@ namespace Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Builders;
 
 public class SaleDocumentBuilder : IDocumentBuilder<Sale>
 {
-    private readonly IFormatter<Sale> _formatter;
-
-    public SaleDocumentBuilder(IFormatter<Sale> formatter)
+    public IDocument Build(Sale sale)
     {
-        _formatter = formatter;
+        Content content = new(
+            text: Content(sale),
+            formatting: new DocumentFormatting());
+
+        return Document.CreateParagraph(content);
     }
 
-    public string Build(Sale sale, BuildSettings? settings = null)
+    private string Content(Sale sale)
     {
-        if (settings.HasValue)
-        {
-            AdjustFormatting(settings.Value);
-        }
-
-        return AddContent(sale);
-    }
-
-    public void AdjustFormatting(BuildSettings settings)
-    {
-        _formatter.SetMargin(settings.Margin);
-    }
-
-    private string AddContent(Sale sale)
-    {
-        return _formatter.FormatLine($"{sale.CopiesSold} copies are sold at ${sale.ProductTag.Price} each.");
+        return $"{sale.CopiesSold} copies are sold" +
+            $"at ${sale.ProductTag.Price} each.";
     }
 }

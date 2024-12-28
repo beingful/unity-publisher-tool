@@ -5,9 +5,9 @@ namespace Unity.Publisher.Tool.Dependencies;
 
 public static class ConfigurationOptionsInjection
 {
-    public static IServiceCollection AddConfigurationOptions(this IServiceCollection services, WebApplicationBuilder builder)
+    public static IServiceCollection AddConfigurationOptions(this IServiceCollection services, IConfiguration configuration)
     {
-        IConfigurationSection optionsSection = builder.Configuration.GetSection("Options");
+        IConfigurationSection optionsSection = configuration.GetSection("Options");
 
         return services
             .Configure<PublisherAccountOptions>(

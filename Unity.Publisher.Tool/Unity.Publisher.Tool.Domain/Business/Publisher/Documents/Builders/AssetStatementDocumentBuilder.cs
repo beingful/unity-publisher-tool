@@ -1,5 +1,4 @@
-﻿using System.Text;
-using Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Formatting;
+﻿using Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Formatting;
 using Unity.Publisher.Tool.Domain.Business.Publisher.Events.Models;
 using Unity.Publisher.Tool.Domain.Business.Publisher.Models;
 
@@ -10,76 +9,54 @@ public class AssetStatementDocumentBuilder : IDocumentBuilder<AssetStatement>
     private readonly IDocumentBuilder<Sales> _salesContentBuilder;
     private readonly IDocumentBuilder<Reviews> _reviewsContentBuilder;
     private readonly IDocumentBuilder<Download> _downloadsContentBuilder;
-    private readonly IFormatter<AssetStatement> _formatter;
 
     public AssetStatementDocumentBuilder(
         IDocumentBuilder<Sales> salesContentBuilder,
         IDocumentBuilder<Reviews> reviewsContentBuilder,
-        IDocumentBuilder<Download> downloadsContentBuilder,
-        IFormatter<AssetStatement> formatter)
+        IDocumentBuilder<Download> downloadsContentBuilder)
     {
         _salesContentBuilder = salesContentBuilder;
         _reviewsContentBuilder = reviewsContentBuilder;
         _downloadsContentBuilder = downloadsContentBuilder;
-        _formatter = formatter;
     }
 
-    public string Build(AssetStatement statement, BuildSettings? settings = null)
+    public IDocument Build(AssetStatement statement)
     {
-        if (settings.HasValue)
-        {
-            AdjustFormatting(settings.Value);
-        }
+        Content content = new(
+            text: Content(statement),
+            formatting: new DocumentFormatting());
 
-        StringBuilder document = new();
+        IDocument document = Document.CreateParagraph(content);
 
-        AppendHeader(statement, document);
-        AppendContent(statement, document);
+        InnerDocuments(statement).ForEach(inner => document.AddInner(inner));
 
-        return document.ToString();
+        return document;
     }
 
-    public void AdjustFormatting(BuildSettings settings)
+    private string Content(AssetStatement statement)
     {
-        _formatter.SetMargin(settings.Margin);
+        return $"{statement.Asset.Name.ToUpper()}\n";
     }
 
-    private void AppendHeader(AssetStatement statement, StringBuilder document)
+    private List<IDocument> InnerDocuments(AssetStatement statement)
     {
-        document.AppendLine(value: _formatter.FormatLine($"{statement.Asset.Name.ToUpper()}\n"));
-    }
-
-    private void AppendContent(AssetStatement statement, StringBuilder document)
-    {
-        string separator = _formatter.ContentSeparator;
-
-        BuildSettings newParagraph = new()
-        {
-            Margin = _formatter.Options.Padding + 1
-        };
+        List<IDocument> documents = new();
 
         if (statement.Sales.IsEmpty == false)
         {
-            AppendContent(statement.Sales, _salesContentBuilder, newParagraph, separator, document);
+            documents.Add(_salesContentBuilder.Build(statement.Sales));
         }
 
         if (statement.Reviews.IsEmpty == false)
         {
-            AppendContent(statement.Reviews, _reviewsContentBuilder, newParagraph, separator, document);
+            documents.Add(_reviewsContentBuilder.Build(statement.Reviews));
         }
 
         if (statement.Downloads.IsEmpty == false)
         {
-            AppendContent(statement.Downloads, _downloadsContentBuilder, newParagraph, separator, document);
+            documents.Add(_downloadsContentBuilder.Build(statement.Downloads));
         }
-    }
 
-    private void AppendContent<TContent>(
-        TContent content, IDocumentBuilder<TContent> contentBuilder,
-        BuildSettings contentBuildSettings, string separator, StringBuilder document)
-    {
-        document
-            .AppendLine(contentBuilder.Build(content, contentBuildSettings))
-            .AppendLine(separator);
+        return documents;
     }
 }

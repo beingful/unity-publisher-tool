@@ -6,31 +6,33 @@ namespace Unity.Publisher.Tool.Endpoints;
 
 public static class EventsNotificationEndpoint
 {
-    public static WebApplication AddNotificationEndpoints(this WebApplication webApplication)
+    public static IEndpointRouteBuilder AddNotificationEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        return webApplication.PostNotification();
+        return endpoints
+            .PostStartNotification()
+            .PostStopNotification();
     }
 
-    private static WebApplication PostSubscription(this WebApplication webApplication)
+    private static IEndpointRouteBuilder PostStartNotification(this IEndpointRouteBuilder endpoints)
     {
-        webApplication.MapPost("start/notification", async (
+        endpoints.MapPost("start/notification", async (
             PostStartNotificationRequest startNotificationRequest,
             PublisherNotificationScheduler publisherNotificationScheduler,
             CancellationToken cancellationToken) =>
         {
             await publisherNotificationScheduler.ScheduleAsync(
                 events: startNotificationRequest.Events,
-                data: new DataTransferEndpoints(
+                data: new NotificationJobData(
                     startNotificationRequest.Sender,
                     startNotificationRequest.Receiver));
         });
 
-        return webApplication;
+        return endpoints;
     }
 
-    private static WebApplication PostNotification(this WebApplication webApplication)
+    private static IEndpointRouteBuilder PostStopNotification(this IEndpointRouteBuilder endpoints)
     {
-        webApplication.MapPost("stop/notification", async (
+        endpoints.MapPost("stop/notification", async (
             PostStopNotificationRequest stopNotificationRequest,
             PublisherNotificationScheduler publisherNotificationScheduler,
             CancellationToken cancellationToken) =>
@@ -39,6 +41,6 @@ public static class EventsNotificationEndpoint
                 events: stopNotificationRequest.Events);
         });
 
-        return webApplication;
+        return endpoints;
     }
 }

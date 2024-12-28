@@ -1,6 +1,5 @@
 ﻿using StackExchange.Redis;
 using System.Text.Json;
-using Unity.Publisher.Tool.Infrastructure.Db.Redis.Models;
 
 namespace Unity.Publisher.Tool.Infrastructure.Db.Redis;
 
@@ -29,15 +28,15 @@ public abstract class BaseRedisDb<TDatabase> where TDatabase : IDatabaseAsync
 
     public abstract StackExchange.Redis.ITransaction Transaction { get; }
 
-    public async Task<TValue?> GetAsync<TValue>(string key)
+    public async Task<TModel?> GetAsync<TModel>(RedisKey key)
     {
-        TValue? result = default;
+        TModel? result = default;
 
         string? data = await Database.StringGetAsync(key);
 
         if (string.IsNullOrEmpty(data) == false)
         {
-            result = JsonSerializer.Deserialize<TValue>(data, _serializerOptions);
+            result = JsonSerializer.Deserialize<TModel>(data, _serializerOptions);
         }
 
         return result;
@@ -50,7 +49,7 @@ public abstract class BaseRedisDb<TDatabase> where TDatabase : IDatabaseAsync
         await Database.StringSetAsync(data.Key, value, data.Lifetime, flags: CommandFlags.FireAndForget);
     }
 
-    public async Task RemoveAsync(string key)
+    public async Task RemoveAsync(RedisKey key)
     {
         await Database.KeyDeleteAsync(key);
     }

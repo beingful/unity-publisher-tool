@@ -1,10 +1,11 @@
-﻿using Hangfire.Storage;
-using Hangfire;
+﻿using Hangfire;
+using Hangfire.Storage;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 using Unity.Publisher.Tool.Infrastructure.Scheduling.Models;
 using Unity.Publisher.Tool.Infrastructure.Scheduling.Hangfire.Coverters;
 using Unity.Publisher.Tool.Infrastructure.Scheduling.Options;
-using Microsoft.Extensions.Options;
+using Unity.Publisher.Tool.Infrastructure.Scheduling.Workers;
 
 namespace Unity.Publisher.Tool.Infrastructure.Scheduling.Hangfire;
 
@@ -13,8 +14,6 @@ public class Scheduler : IScheduler
     private readonly SchedulingOptions _schedulingOptions;
     private readonly IStorageConnection _storageConnection;
     private readonly ILogger<Scheduler> _logger;
-
-    private const int _maximumRecurringJobsNumber = 2;
 
     public Scheduler(
         IOptions<SchedulingOptions> schedulingOptions,
@@ -37,12 +36,13 @@ public class Scheduler : IScheduler
 
     public void Unschedule(string jobId)
     {
+        _storageConnection.GetJobData(jobId);
         RecurringJob.RemoveIfExists(jobId);
     }
 
     public bool CanSchedule(string jobId)
     {
-        return SchedulePacked() == false && JobScheduled(jobId) == false;
+        return (SchedulePacked() || JobScheduled(jobId)) == false;
     }
 
     public bool CanUnschedule(string jobId)

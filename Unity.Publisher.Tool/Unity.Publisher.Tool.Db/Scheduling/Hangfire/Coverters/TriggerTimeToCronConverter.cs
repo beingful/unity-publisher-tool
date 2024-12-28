@@ -22,6 +22,17 @@ public static class TriggerTimeToCronConverter
 
     private static string ToIntervalCrone(TriggerTime triggerTime)
     {
-        return $"*/{triggerTime.Time.Minute} */{triggerTime.Time.Hour} * * *";
+        string crone = CroneRepresentation(triggerTime.Time.Minute) + " "
+            + CroneRepresentation(triggerTime.Time.Hour) + " "
+            + CroneRepresentation(triggerTime.Time.Day) + " "
+            + CroneRepresentation(0) + " "
+            + CroneRepresentation(0);
+
+        return crone;
+    }
+
+    private static string CroneRepresentation(int time)
+    {
+        return time > 0 ? $"*/{time}" : "*";
     }
 }

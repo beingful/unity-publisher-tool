@@ -11,12 +11,12 @@ using Unity.Publisher.Tool.Infrastructure.Http.Clients;
 namespace Unity.Publisher.Tool.Infrastructure.Api.PublisherApi;
 
 public class PublisherApi : StatefulApi, IStartable,
-    IDataSource<PublisherInfo>,
-    IDataSource<Revenue>,
-    IDataSource<Assets>,
-    IDataSource<Sales>,
-    IDataSource<Reviews>,
-    IDataSource<Downloads>
+    IDataService<PublisherInfo>,
+    IDataService<Revenue>,
+    IDataService<Assets>,
+    IDataService<Sales>,
+    IDataService<Reviews>,
+    IDataService<Downloads>
 {
     private readonly Month _currentMonth;
 
@@ -36,21 +36,21 @@ public class PublisherApi : StatefulApi, IStartable,
         Publisher = GetPublisherIdAsync().Result;
     }
 
-    async Task<Assets> IDataSource<Assets>.GetAsync()
+    async Task<Assets> IDataService<Assets>.GetAsync()
     {
         GetPackagesEndpoint packagesEndpoint = new();
 
         return await GetAsync<GetPackagesResponse, Assets>(packagesEndpoint.Path());
     }
 
-    async Task<Sales> IDataSource<Sales>.GetAsync()
+    async Task<Sales> IDataService<Sales>.GetAsync()
     {
         GetSalesEndpoint salesEndpoint = new(Publisher.Id);
 
         return await GetAsync<GetSalesResponse, Sales>(salesEndpoint.Path());
     }
 
-    async Task<Reviews> IDataSource<Reviews>.GetAsync()
+    async Task<Reviews> IDataService<Reviews>.GetAsync()
     {
         GetReviewsEndpoint reviewsEndpoint = new(Publisher.Id);
 
@@ -61,7 +61,7 @@ public class PublisherApi : StatefulApi, IStartable,
             .ToArray());
     }
 
-    async Task<Downloads> IDataSource<Downloads>.GetAsync()
+    async Task<Downloads> IDataService<Downloads>.GetAsync()
     {
         GetDownloadsEndpoint downloadsEndpoint = new(Publisher.Id);
 
@@ -70,14 +70,14 @@ public class PublisherApi : StatefulApi, IStartable,
         return await GetAsync<GetDownloadsResponse, Downloads>(downloadsEndpoint.Path());
     }
 
-    async Task<Revenue> IDataSource<Revenue>.GetAsync()
+    async Task<Revenue> IDataService<Revenue>.GetAsync()
     {
         GetRevenueEndpoint revenueEndpoint = new(Publisher.Id);
 
         return await GetAsync<GetRevenueResponse, Revenue>(revenueEndpoint.Path());
     }
 
-    async Task<PublisherInfo> IDataSource<PublisherInfo>.GetAsync()
+    async Task<PublisherInfo> IDataService<PublisherInfo>.GetAsync()
     {
         GetPublisherOverviewEndpoint publisherOverviewEndpoint = new(Publisher.Id);
 
