@@ -1,5 +1,5 @@
-﻿using Unity.Publisher.Tool.Domain.Business.Publisher.Documents;
-using Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Builders;
+﻿using Unity.Publisher.Tool.Domain.Business.Documents;
+using Unity.Publisher.Tool.Domain.Business.Documents.Builders;
 using Unity.Publisher.Tool.Infrastructure.Notification;
 using Unity.Publisher.Tool.Infrastructure.Notification.Models;
 

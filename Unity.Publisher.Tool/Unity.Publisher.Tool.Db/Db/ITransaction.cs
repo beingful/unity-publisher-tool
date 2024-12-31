@@ -2,7 +2,5 @@
 
 public interface ITransaction
 {
-    ITransaction Enqueue(Func<IStorage, Task> dbRequest);
-
     Task ExecuteAsync();
 }

@@ -1,6 +1,11 @@
 ﻿namespace Unity.Publisher.Tool.Domain.Data;
 
-public interface IProvider<TContent>
+public interface IProvider<TOut>
 {
-    TContent Provide();
+    TOut Provide();
+}
+
+public interface IProvider<TIn, TOut>
+{
+    TOut Provide(TIn input);
 }

@@ -1,10 +1,8 @@
-﻿namespace Unity.Publisher.Tool.Infrastructure.Scheduling.Storage;
+﻿//namespace Unity.Publisher.Tool.Infrastructure.Scheduling.Storage;
 
-public interface IScheduleStorage
-{
-    Task<TSchedulerData> FetchAsync<TSchedulerData>(string jobId) where TSchedulerData : class;
+//public interface IScheduleStorage
+//{
+//    bool Contains(string jobId);
 
-    Task LoadAsync<TSchedulerData>(string jobId, TSchedulerData data);
-
-    Task UnloadAsync<TSchedulerData>(string jobId);
-}
+//    int Occupation();
+//}

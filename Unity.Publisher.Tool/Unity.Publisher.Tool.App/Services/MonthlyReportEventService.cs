@@ -1,4 +1,4 @@
-﻿using Unity.Publisher.Tool.Domain.Business.Publisher.Models;
+﻿using Unity.Publisher.Tool.Domain.Business.Models;
 using Unity.Publisher.Tool.Domain.Data;
 
 namespace Unity.Publisher.Tool.App.Services;
@@ -8,30 +8,30 @@ public sealed class MonthlyReportEventService : IDataService<PublisherReport>
     private readonly PublisherStatementService _statementProvider;
     private readonly IDataService<PublisherInfo> _publisherInfoSource;
     private readonly IDataService<Revenue> _revenueSource;
-    private readonly Month _currentMonth;
+    private readonly DateTime _now;
 
     public MonthlyReportEventService(
         PublisherStatementService statementProvider,
         IDataService<PublisherInfo> publisherInfoSource,
         IDataService<Revenue> revenueSource,
-        Month currentMonth)
+        DateTime now)
     {
         _statementProvider = statementProvider;
         _revenueSource = revenueSource;
         _publisherInfoSource = publisherInfoSource;
-        _currentMonth = currentMonth;
+        _now = now;
     }
 
     public async Task<PublisherReport> GetAsync()
     {
         Task<PublisherInfo> getPublisherTask = _publisherInfoSource.GetAsync();
         Task<Revenue> getRevenueTask = _revenueSource.GetAsync();
-        Task<PublisherStatement> getStatementTask = _statementProvider.GetRefreshedAsync();
+        Task<PublisherStatement> getStatementTask = _statementProvider.RefreshAsync();
 
         return new PublisherReport(
             publisher: await getPublisherTask,
             revenue: await getRevenueTask,
             statement: await getStatementTask,
-            month: _currentMonth);
+            month: new Month(order: _now.Month));
     }
 }

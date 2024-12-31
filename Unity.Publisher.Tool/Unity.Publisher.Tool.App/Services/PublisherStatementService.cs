@@ -1,6 +1,5 @@
-﻿using Unity.Publisher.Tool.Domain.Business.Publisher.Models;
+﻿using Unity.Publisher.Tool.Domain.Business.Models;
 using Unity.Publisher.Tool.Domain.Data;
-using Unity.Publisher.Tool.Infrastructure.Db;
 
 namespace Unity.Publisher.Tool.App.Services;
 
@@ -10,43 +9,33 @@ public class PublisherStatementService
     private readonly IDataService<Sales> _salesSource;
     private readonly IDataService<Reviews> _reviewsSource;
     private readonly IDataService<Downloads> _downloadsSource;
-    private readonly IStorage _storage;
-    private readonly Month _month;
+    private readonly IPublisherEventDataStorage _publisherDataStorage;
+    private readonly DateTime _now;
 
     public PublisherStatementService(
         IDataService<Assets> assetsSource,
         IDataService<Sales> salesSource,
         IDataService<Reviews> reviewsSource,
         IDataService<Downloads> downloadsSource,
-        IStorage storage,
-        Month month)
+        IPublisherEventDataStorage publisherDataStorage,
+        DateTime now)
     {
         _assetsSource = assetsSource;
         _salesSource = salesSource;
         _reviewsSource = reviewsSource;
         _downloadsSource = downloadsSource;
-        _storage = storage;
-        _month = month;
+        _publisherDataStorage = publisherDataStorage;
+        _now = now;
     }
 
-    public async Task<(PublisherStatement Refreshed, PublisherStatement Stored)> GetLatestAsync()
+    public PublisherStatement GetStored()
     {
-        PublisherStatement[] statements = await Task.WhenAll(
-            GetStoredAsync(),
-            GetRefreshedAsync());
-
-        return (Refreshed: statements.First(), Stored: statements.Last());
-    }
-
-    private async Task<PublisherStatement> GetStoredAsync()
-    {
-        PublisherStatement? storedStatementEntity = await _storage
-            .GetValueOrDefaultAsync<PublisherStatement>(id: _month.Name);
+        PublisherStatement storedStatementEntity = _publisherDataStorage.Fetch<PublisherStatement>();
 
         return storedStatementEntity ?? PublisherStatement.Empty();
     }
 
-    public async Task<PublisherStatement> GetRefreshedAsync()
+    public async Task<PublisherStatement> RefreshAsync()
     {
         Task<Assets> getAssetsTask = _assetsSource.GetAsync();
         Task<Sales> getSalesTask = _salesSource.GetAsync();
@@ -57,6 +46,7 @@ public class PublisherStatementService
             assets: await getAssetsTask,
             sales: await getSalesTask,
             reviews: await getrReviewsTask,
-            downloads: await getDownloadsTask);
+            downloads: await getDownloadsTask,
+            creationTime: _now);
     }
 }

@@ -5,38 +5,30 @@ namespace Unity.Publisher.Tool.App.Services;
 
 public class PublisherNotificationScheduler
 {
-    private readonly IKeyedProvider<PublisherEvent, IPublisherEventNotificationScheduler> _schedulers;
+    private readonly IKeyedProvider<PublisherEvent, INotificationScheduler> _schedulers;
 
-    public PublisherNotificationScheduler(IKeyedProvider<PublisherEvent, IPublisherEventNotificationScheduler> schedulers)
+    public PublisherNotificationScheduler(IKeyedProvider<PublisherEvent, INotificationScheduler> schedulers)
     {
         _schedulers = schedulers;
     }
 
-    public async Task ScheduleAsync(PublisherEvent[] events, NotificationJobData data)
+    public void Schedule(PublisherEvent[] events, NotificationDetails data)
     {
-        Task[] scheduleTasks = new Task[events.Length];
-
-        for (int i = 0; i < scheduleTasks.Length; ++i)
+        foreach (PublisherEvent publisherEvent in events)
         {
-            IPublisherEventNotificationScheduler scheduler = _schedulers.Provide(events[i]);
+            INotificationScheduler scheduler = _schedulers.Provide(publisherEvent);
 
-            scheduleTasks[i] = scheduler.ScheduleAsync(data);
+            scheduler.Schedule(data);
         }
-
-        await Task.WhenAll(scheduleTasks);
     }
 
-    public async Task UnscheduleAsync(PublisherEvent[] events)
+    public void Unschedule(PublisherEvent[] events)
     {
-        Task[] unscheduleTasks = new Task[events.Length];
-
-        for (int i = 0; i < unscheduleTasks.Length; ++i)
+        foreach (PublisherEvent publisherEvent in events)
         {
-            IPublisherEventNotificationScheduler scheduler = _schedulers.Provide(events[i]);
+            INotificationScheduler scheduler = _schedulers.Provide(publisherEvent);
 
-            unscheduleTasks[i] = scheduler.UnscheduleAsync();
+            scheduler.Unschedule();
         }
-
-        await Task.WhenAll(unscheduleTasks);
     }
 }

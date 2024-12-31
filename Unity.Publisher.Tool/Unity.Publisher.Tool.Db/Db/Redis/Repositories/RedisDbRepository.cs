@@ -2,9 +2,9 @@
 
 namespace Unity.Publisher.Tool.Infrastructure.Db.Redis.Repositories;
 
-public class RedisDbRepository : IStorage
+public class RedisDbRepository : IRedisStorage
 {
-    private readonly IStorage _baseRepository;
+    private readonly IRedisStorage _baseRepository;
 
     public RedisDbRepository(ConnectionMultiplexer dbConnection)
     {
@@ -12,9 +12,14 @@ public class RedisDbRepository : IStorage
             redisDb: new RedisDb(dbConnection));
     }
 
-    public ITransaction CreateTransaction()
+    public IRedisTransaction CreateTransaction()
     {
         return _baseRepository.CreateTransaction();
+    }
+
+    public ITransactionQueue<IRedisTransaction, IRedisStorage> CreateTransactionQueue(IRedisTransaction transaction)
+    {
+        return _baseRepository.CreateTransactionQueue(transaction);
     }
 
     public async Task<TModel> GetAsync<TModel>(string id) where TModel : class

@@ -1,42 +1,53 @@
 ﻿using Hangfire;
-using Hangfire.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Unity.Publisher.Tool.Infrastructure.Scheduling.Models;
 using Unity.Publisher.Tool.Infrastructure.Scheduling.Hangfire.Coverters;
 using Unity.Publisher.Tool.Infrastructure.Scheduling.Options;
 using Unity.Publisher.Tool.Infrastructure.Scheduling.Workers;
+using Unity.Publisher.Tool.Infrastructure.Scheduling.Models;
+using Hangfire.Storage;
 
 namespace Unity.Publisher.Tool.Infrastructure.Scheduling.Hangfire;
 
 public class Scheduler : IScheduler
 {
-    private readonly SchedulingOptions _schedulingOptions;
+    //private readonly IJobDataStorage _jobDataStorage;
+    //private readonly IScheduleStorage _scheduleStorage;
     private readonly IStorageConnection _storageConnection;
     private readonly ILogger<Scheduler> _logger;
+    private readonly SchedulingOptions _options;
 
     public Scheduler(
-        IOptions<SchedulingOptions> schedulingOptions,
+        //IJobDataStorage jobDataStorage,
+        //IScheduleStorage scheduleStorage,
         IStorageConnection storageConnection,
-        ILogger<Scheduler> logger)
+        ILogger<Scheduler> logger,
+        IOptions<SchedulingOptions> options)
     {
-        _schedulingOptions = schedulingOptions.Value;
+        //_jobDataStorage = jobDataStorage;
+        //_scheduleStorage = scheduleStorage;
         _storageConnection = storageConnection;
         _logger = logger;
+        _options = options.Value;
     }
 
-    public void Schedule<TService>(Job job) where TService : IScheduleWorker
+    public void Schedule<TWorker, TWorkerArg>(Job job, TWorkerArg argument)
+        where TWorker : IScheduleWorker<TWorkerArg>
     {
-        RecurringJob.AddOrUpdate<TService>(
+        RecurringJob.AddOrUpdate<TWorker>(
             recurringJobId: job.Id,
-            methodCall: (worker) => worker.ExecuteAsync(),
+            methodCall: worker => worker.ExecuteAsync(argument),
             cronExpression: TriggerTimeToCronConverter.Convert(job.Time),
             options: new RecurringJobOptions { TimeZone = TimeZoneInfo.Utc });
+
+        //if (job.IsParameterless == false)
+        //{
+        //    _jobDataStorage.Insert(job.Id, job.Parameters);
+        //}
     }
 
     public void Unschedule(string jobId)
     {
-        _storageConnection.GetJobData(jobId);
         RecurringJob.RemoveIfExists(jobId);
     }
 
@@ -50,13 +61,13 @@ public class Scheduler : IScheduler
         return JobScheduled(jobId);
     }
 
+    private bool SchedulePacked()
+    {
+        return _storageConnection.GetRecurringJobs().Count >= _options.JobsLimit;
+    }
+
     private bool JobScheduled(string jobId)
     {
         return _storageConnection.GetRecurringJobs().Any(x => x.Id == jobId);
-    }
-
-    private bool SchedulePacked()
-    {
-        return _storageConnection.GetRecurringJobs().Count >= _schedulingOptions.JobsLimit;
     }
 }

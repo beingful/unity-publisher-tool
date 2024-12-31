@@ -1,30 +1,33 @@
 ﻿using Unity.Publisher.Tool.App.Models;
 using Unity.Publisher.Tool.Infrastructure.Scheduling;
 using Unity.Publisher.Tool.Infrastructure.Scheduling.Models;
-using Unity.Publisher.Tool.Infrastructure.Scheduling.Workers;
 
 namespace Unity.Publisher.Tool.App.Services;
 
-public abstract class PublisherEventNotificationScheduler : IPublisherEventNotificationScheduler
+public abstract class PublisherEventNotificationScheduler : INotificationScheduler
 {
-    private readonly IDataDrivenScheduler _scheduler;
+    private readonly IPublisherEventIdProvider _publisherEventIdProvider;
+    private readonly IScheduler _scheduler;
 
-    public PublisherEventNotificationScheduler(IDataDrivenScheduler scheduler)
+    public PublisherEventNotificationScheduler(
+        IPublisherEventIdProvider publisherEventIdProvider, IScheduler scheduler)
     {
+        _publisherEventIdProvider = publisherEventIdProvider;
         _scheduler = scheduler;
     }
 
-    public abstract Task ScheduleAsync(NotificationJobData schedulerData);
+    public abstract void Schedule(NotificationDetails schedulerData);
 
-    public abstract Task UnscheduleAsync();
-
-    protected async Task ScheduleAsync<TData>(Job job, NotificationJobData data) where TData : class
+    public void Unschedule()
     {
-        await _scheduler.ScheduleAsync<IScheduleWorker<TData>, NotificationJobData>(job, data);
+        _scheduler.Unschedule(_publisherEventIdProvider.Provide());
     }
 
-    protected async Task UnscheduleAsync(string jobId)
+    protected void Schedule<TPublisherEventData>(TriggerTime trigger, NotificationDetails data)
+        where TPublisherEventData : class
     {
-        await _scheduler.UnscheduleAsync<NotificationJobData>(jobId);
+        Job job = new(_publisherEventIdProvider.Provide(), trigger);
+
+        _scheduler.Schedule<PublisherEventHandler<TPublisherEventData>, NotificationDetails>(job, data);
     }
 }

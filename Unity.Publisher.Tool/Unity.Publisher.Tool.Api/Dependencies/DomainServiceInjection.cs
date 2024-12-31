@@ -1,10 +1,9 @@
 ﻿using Autofac;
 using Unity.Publisher.Tool.Domain.Data;
-using Unity.Publisher.Tool.Domain.Business.Publisher.Models;
-using Unity.Publisher.Tool.Domain.Business.Publisher.Documents.Builders;
-using Unity.Publisher.Tool.Domain.Business.Publisher.Events.Models;
-using Unity.Publisher.Tool.Domain.Business.Publisher.Comparers;
 using Hangfire;
+using Unity.Publisher.Tool.Domain.Business.Models;
+using Unity.Publisher.Tool.Domain.Business.Documents.Builders;
+using Unity.Publisher.Tool.Domain.Business.Comparers;
 
 namespace Unity.Publisher.Tool.Dependencies;
 

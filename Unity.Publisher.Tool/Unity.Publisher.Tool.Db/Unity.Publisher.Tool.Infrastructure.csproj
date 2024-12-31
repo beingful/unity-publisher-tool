@@ -21,4 +21,8 @@
     <ProjectReference Include="..\Unity.Publisher.Tool.Domain\Unity.Publisher.Tool.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Scheduling\Providers\" />
+  </ItemGroup>
+
 </Project>

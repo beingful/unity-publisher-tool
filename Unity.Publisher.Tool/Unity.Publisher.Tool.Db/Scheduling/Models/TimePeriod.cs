@@ -8,6 +8,7 @@ internal class TimePeriod
 
     public TimePeriod(int day, int hour, int minute)
     {
+        Day = day;
         Hour = hour;
         Minute = minute;
     }

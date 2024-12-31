@@ -1,6 +1,6 @@
 ﻿using Autofac;
 using Microsoft.Extensions.Logging;
-using Unity.Publisher.Tool.Domain.Business.Publisher.Models;
+using Unity.Publisher.Tool.Domain.Business.Models;
 using Unity.Publisher.Tool.Domain.Data;
 using Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Endpoints;
 using Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Models;
@@ -29,7 +29,7 @@ public class PublisherApi : StatefulApi, IStartable,
         _currentMonth = currentMonth;
     }
 
-    internal static PublisherProfile Publisher { get; private set; }
+    internal static PublisherProfile? Publisher { get; private set; }
 
     void IStartable.Start()
     {
@@ -45,14 +45,14 @@ public class PublisherApi : StatefulApi, IStartable,
 
     async Task<Sales> IDataService<Sales>.GetAsync()
     {
-        GetSalesEndpoint salesEndpoint = new(Publisher.Id);
+        GetSalesEndpoint salesEndpoint = new(Publisher!.Id);
 
         return await GetAsync<GetSalesResponse, Sales>(salesEndpoint.Path());
     }
 
     async Task<Reviews> IDataService<Reviews>.GetAsync()
     {
-        GetReviewsEndpoint reviewsEndpoint = new(Publisher.Id);
+        GetReviewsEndpoint reviewsEndpoint = new(Publisher!.Id);
 
         Reviews reviews = await GetAsync<GetReviewsResponse, Reviews>(reviewsEndpoint.Path());
 
@@ -63,7 +63,7 @@ public class PublisherApi : StatefulApi, IStartable,
 
     async Task<Downloads> IDataService<Downloads>.GetAsync()
     {
-        GetDownloadsEndpoint downloadsEndpoint = new(Publisher.Id);
+        GetDownloadsEndpoint downloadsEndpoint = new(Publisher!.Id);
 
         string path = downloadsEndpoint.Path();
 
@@ -72,14 +72,14 @@ public class PublisherApi : StatefulApi, IStartable,
 
     async Task<Revenue> IDataService<Revenue>.GetAsync()
     {
-        GetRevenueEndpoint revenueEndpoint = new(Publisher.Id);
+        GetRevenueEndpoint revenueEndpoint = new(Publisher!.Id);
 
         return await GetAsync<GetRevenueResponse, Revenue>(revenueEndpoint.Path());
     }
 
     async Task<PublisherInfo> IDataService<PublisherInfo>.GetAsync()
     {
-        GetPublisherOverviewEndpoint publisherOverviewEndpoint = new(Publisher.Id);
+        GetPublisherOverviewEndpoint publisherOverviewEndpoint = new(Publisher!.Id);
 
         Rating publisherRating = await GetAsync<GetPublisherOverviewResponse, Rating>(
             publisherOverviewEndpoint.Path());

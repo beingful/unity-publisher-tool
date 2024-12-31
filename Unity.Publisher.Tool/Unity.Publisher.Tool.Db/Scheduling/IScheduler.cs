@@ -5,7 +5,7 @@ namespace Unity.Publisher.Tool.Infrastructure.Scheduling;
 
 public interface IScheduler
 {
-    void Schedule<TService>(Job job) where TService : IScheduleWorker;
+    void Schedule<TWorker, TWorkerArg>(Job job, TWorkerArg argument) where TWorker : IScheduleWorker<TWorkerArg>;
 
     void Unschedule(string jobId);
 

@@ -2,7 +2,7 @@
 
 namespace Unity.Publisher.Tool.Infrastructure.Db.Redis.Repositories;
 
-public class BaseRedisDbRepository<TOperationType> : IStorage
+public class BaseRedisDbRepository<TOperationType> : IRedisStorage
     where TOperationType : IDatabaseAsync
 {
     private readonly BaseRedisDb<TOperationType> _redisDb;
@@ -12,9 +12,15 @@ public class BaseRedisDbRepository<TOperationType> : IStorage
         _redisDb = redisDb;
     }
 
-    public ITransaction CreateTransaction()
+    public IRedisTransaction CreateTransaction()
     {
-        return new RedisDbTransactionRepository(new RedisDbTransaction(_redisDb.Transaction));
+        return new RedisDbTransactionRepository(
+            transaction: new RedisDbTransaction(_redisDb.Transaction));
+    }
+
+    public ITransactionQueue<IRedisTransaction, IRedisStorage> CreateTransactionQueue(IRedisTransaction transaction)
+    {
+        return new TransactionQueue<IRedisTransaction, IRedisStorage>(transaction);
     }
 
     public async Task<TModel> GetAsync<TModel>(string id) where TModel : class

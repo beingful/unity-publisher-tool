@@ -1,16 +1,14 @@
 ﻿using Autofac;
 using Hangfire;
-using Hangfire.Storage;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
-using Unity.Publisher.Tool.Domain.Business.Publisher.Models;
+using Unity.Publisher.Tool.Domain.Business.Models;
 using Unity.Publisher.Tool.Domain.Data;
 using Unity.Publisher.Tool.Infrastructure.Api.PublisherApi;
 using Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.LogIn;
 using Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Options;
 using Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Session;
 using Unity.Publisher.Tool.Infrastructure.Api.State;
-using Unity.Publisher.Tool.Infrastructure.Db;
 using Unity.Publisher.Tool.Infrastructure.Db.Redis;
 using Unity.Publisher.Tool.Infrastructure.Db.Redis.Repositories;
 using Unity.Publisher.Tool.Infrastructure.Http.Clients;
@@ -19,8 +17,8 @@ using Unity.Publisher.Tool.Infrastructure.Notification.Emails;
 using Unity.Publisher.Tool.Infrastructure.Notification.Emails.Models;
 using Unity.Publisher.Tool.Infrastructure.Scheduling;
 using Unity.Publisher.Tool.Infrastructure.Scheduling.Hangfire;
+using Unity.Publisher.Tool.Infrastructure.Scheduling.Hangfire.Storage;
 using Unity.Publisher.Tool.Infrastructure.Scheduling.Storage;
-using Unity.Publisher.Tool.Infrastructure.Scheduling.Workers;
 using IHttpClientFactory = Unity.Publisher.Tool.Infrastructure.Http.Clients.IHttpClientFactory;
 
 namespace Unity.Publisher.Tool.Dependencies;
@@ -123,7 +121,7 @@ public static class InfrastructureServiceInjection
 
         container
             .RegisterType<RedisDbRepository>()
-            .As<IStorage>()
+            .As<IRedisStorage>()
             .InstancePerLifetimeScope();
 
         container
@@ -132,26 +130,16 @@ public static class InfrastructureServiceInjection
             .InstancePerLifetimeScope();
 
         container
-            .RegisterType<DataDrivenScheduler>()
-            .As<IDataDrivenScheduler>()
-            .InstancePerLifetimeScope();
-
-        container
-            .Register<IStorageConnection>(context =>
+            .Register(context =>
             {
                 return JobStorage.Current.GetConnection();
             })
             .InstancePerLifetimeScope();
 
         container
-            .RegisterType<ScheduleStorage>()
-            .As<IScheduleStorage>()
+            .RegisterType<JobDataStorage>()
+            .As<IJobDataStorage>()
             .InstancePerLifetimeScope();
-
-        container
-            .RegisterGeneric(typeof(ScheduleWorker<>))
-            .As(typeof(IScheduleWorker<>))
-            .InstancePerBackgroundJob();
 
         return container;
     }

@@ -15,14 +15,14 @@ public static class EventsNotificationEndpoint
 
     private static IEndpointRouteBuilder PostStartNotification(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapPost("start/notification", async (
+        endpoints.MapPost("start/notification", (
             PostStartNotificationRequest startNotificationRequest,
             PublisherNotificationScheduler publisherNotificationScheduler,
             CancellationToken cancellationToken) =>
         {
-            await publisherNotificationScheduler.ScheduleAsync(
+            publisherNotificationScheduler.Schedule(
                 events: startNotificationRequest.Events,
-                data: new NotificationJobData(
+                data: new NotificationDetails(
                     startNotificationRequest.Sender,
                     startNotificationRequest.Receiver));
         });
@@ -32,13 +32,12 @@ public static class EventsNotificationEndpoint
 
     private static IEndpointRouteBuilder PostStopNotification(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapPost("stop/notification", async (
+        endpoints.MapPost("stop/notification", (
             PostStopNotificationRequest stopNotificationRequest,
             PublisherNotificationScheduler publisherNotificationScheduler,
             CancellationToken cancellationToken) =>
         {
-            await publisherNotificationScheduler.UnscheduleAsync(
-                events: stopNotificationRequest.Events);
+            publisherNotificationScheduler.Unschedule(stopNotificationRequest.Events);
         });
 
         return endpoints;

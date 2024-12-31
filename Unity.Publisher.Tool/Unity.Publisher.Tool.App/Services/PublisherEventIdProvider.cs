@@ -1,9 +1,8 @@
 ﻿using Unity.Publisher.Tool.App.Models;
-using Unity.Publisher.Tool.Domain.Data;
 
 namespace Unity.Publisher.Tool.App.Services;
 
-public class PublisherEventIdProvider : IProvider<string>
+public class PublisherEventIdProvider : IPublisherEventIdProvider
 {
     private readonly PublisherEvent _seed;
 
@@ -14,6 +13,6 @@ public class PublisherEventIdProvider : IProvider<string>
 
     public string Provide()
     {
-        return Enum.GetName(_seed)!.ToUpper();
+        return Enum.GetName(_seed)!.ToLower();
     }
 }

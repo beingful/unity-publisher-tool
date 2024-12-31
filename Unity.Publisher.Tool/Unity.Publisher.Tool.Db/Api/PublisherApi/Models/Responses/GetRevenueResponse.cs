@@ -1,5 +1,5 @@
 ﻿using System.Text.Json.Serialization;
-using Unity.Publisher.Tool.Domain.Business.Publisher.Models;
+using Unity.Publisher.Tool.Domain.Business.Models;
 using Unity.Publisher.Tool.Domain.Data;
 using Unity.Publisher.Tool.Infrastructure.Extensions;
 
