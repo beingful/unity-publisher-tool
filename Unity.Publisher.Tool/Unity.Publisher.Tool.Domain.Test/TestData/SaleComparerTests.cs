@@ -1,4 +1,4 @@
-﻿using Unity.Publisher.Tool.Domain.Business.Models;
+﻿using Unity.Publisher.Tool.Domain.Publisher;
 
 namespace Unity.Publisher.Tool.Domain.Test.Comparers;
 

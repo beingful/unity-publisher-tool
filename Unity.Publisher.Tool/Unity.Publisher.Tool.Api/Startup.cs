@@ -5,6 +5,7 @@ using Hangfire.Redis.StackExchange;
 using StackExchange.Redis;
 using Unity.Publisher.Tool.Dependencies;
 using Unity.Publisher.Tool.Endpoints;
+using Unity.Publisher.Tool.Infrastructure.Db.Redis;
 
 namespace Unity.Publisher.Tool;
 
@@ -24,8 +25,20 @@ public class Startup
             .AddSwaggerGen()
             .AddHangfire((sp, configuration) =>
             {
+                string connectionString = Configuration.GetConnectionString(nameof(RedisDb))!;
+
                 configuration
-                    .UseRedisStorage(sp.GetRequiredService<ConnectionMultiplexer>());
+                    .UseRedisStorage(
+                        ConnectionMultiplexer.Connect(connectionString),
+                        new RedisStorageOptions
+                        {
+                            UseTransactions = false
+                        })
+                    .UseFilter(new AutomaticRetryAttribute
+                    {
+                        Attempts = 0,
+                        OnAttemptsExceeded = AttemptsExceededAction.Delete
+                    });
             })
             .AddHangfireServer()
             .AddConfigurationOptions(Configuration);

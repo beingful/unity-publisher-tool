@@ -1,4 +1,4 @@
-﻿using Unity.Publisher.Tool.Infrastructure.Notification.Models;
+﻿using Unity.Publisher.Tool.Domain.Notifications;
 
 namespace Unity.Publisher.Tool.App.Models;
 

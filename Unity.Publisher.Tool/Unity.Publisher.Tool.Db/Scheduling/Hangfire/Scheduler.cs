@@ -1,49 +1,36 @@
 ﻿using Hangfire;
+using Hangfire.Storage;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using Unity.Publisher.Tool.Infrastructure.Scheduling.Hangfire.Coverters;
 using Unity.Publisher.Tool.Infrastructure.Scheduling.Options;
 using Unity.Publisher.Tool.Infrastructure.Scheduling.Workers;
-using Unity.Publisher.Tool.Infrastructure.Scheduling.Models;
-using Hangfire.Storage;
 
 namespace Unity.Publisher.Tool.Infrastructure.Scheduling.Hangfire;
 
 public class Scheduler : IScheduler
 {
-    //private readonly IJobDataStorage _jobDataStorage;
-    //private readonly IScheduleStorage _scheduleStorage;
     private readonly IStorageConnection _storageConnection;
     private readonly ILogger<Scheduler> _logger;
     private readonly SchedulingOptions _options;
 
     public Scheduler(
-        //IJobDataStorage jobDataStorage,
-        //IScheduleStorage scheduleStorage,
         IStorageConnection storageConnection,
         ILogger<Scheduler> logger,
         IOptions<SchedulingOptions> options)
     {
-        //_jobDataStorage = jobDataStorage;
-        //_scheduleStorage = scheduleStorage;
         _storageConnection = storageConnection;
         _logger = logger;
         _options = options.Value;
     }
 
-    public void Schedule<TWorker, TWorkerArg>(Job job, TWorkerArg argument)
-        where TWorker : IScheduleWorker<TWorkerArg>
+    public void Schedule<TWorker, TWorkerData>(Job job, TWorkerData data)
+        where TWorker : IScheduleWorker<TWorkerData>
     {
         RecurringJob.AddOrUpdate<TWorker>(
             recurringJobId: job.Id,
-            methodCall: worker => worker.ExecuteAsync(argument),
+            methodCall: worker => worker.ExecuteAsync(data),
             cronExpression: TriggerTimeToCronConverter.Convert(job.Time),
             options: new RecurringJobOptions { TimeZone = TimeZoneInfo.Utc });
-
-        //if (job.IsParameterless == false)
-        //{
-        //    _jobDataStorage.Insert(job.Id, job.Parameters);
-        //}
     }
 
     public void Unschedule(string jobId)

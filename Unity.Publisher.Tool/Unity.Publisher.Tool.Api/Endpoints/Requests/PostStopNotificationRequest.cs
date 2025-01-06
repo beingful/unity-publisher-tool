@@ -1,4 +1,4 @@
-﻿using Unity.Publisher.Tool.App.Models;
+﻿using Unity.Publisher.Tool.Domain.Publisher;
 
 namespace Unity.Publisher.Tool.Endpoints.Requests;
 

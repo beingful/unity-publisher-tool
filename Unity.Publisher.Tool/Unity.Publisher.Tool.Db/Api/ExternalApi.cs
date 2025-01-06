@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using Unity.Publisher.Tool.Domain.Data;
+using Unity.Publisher.Tool.Domain.General;
 using Unity.Publisher.Tool.Infrastructure.Http.Clients;
 using Unity.Publisher.Tool.Infrastructure.Http.Responses;
 

@@ -1,11 +1,11 @@
-﻿using Unity.Publisher.Tool.Infrastructure.Scheduling.Models;
-using Unity.Publisher.Tool.Infrastructure.Scheduling.Workers;
+﻿using Unity.Publisher.Tool.Infrastructure.Scheduling.Workers;
 
 namespace Unity.Publisher.Tool.Infrastructure.Scheduling;
 
 public interface IScheduler
 {
-    void Schedule<TWorker, TWorkerArg>(Job job, TWorkerArg argument) where TWorker : IScheduleWorker<TWorkerArg>;
+    void Schedule<TWorker, TWorkerData>(Job job, TWorkerData workerData)
+        where TWorker : IScheduleWorker<TWorkerData>;
 
     void Unschedule(string jobId);
 

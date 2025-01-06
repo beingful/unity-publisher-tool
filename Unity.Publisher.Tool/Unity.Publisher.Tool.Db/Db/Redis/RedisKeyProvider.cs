@@ -1,9 +1,8 @@
 ﻿using StackExchange.Redis;
-using Unity.Publisher.Tool.Domain.Data;
 
 namespace Unity.Publisher.Tool.Infrastructure.Db.Redis;
 
-internal class RedisKeyProvider<TModel> : IProvider<Entity<TModel>, RedisKey>
+internal class RedisKeyProvider<TModel>
 {
     public RedisKey Provide(Entity<TModel> entity)
     {

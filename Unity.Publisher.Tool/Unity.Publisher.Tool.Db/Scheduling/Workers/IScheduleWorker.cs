@@ -1,6 +1,6 @@
 ﻿namespace Unity.Publisher.Tool.Infrastructure.Scheduling.Workers;
 
-public interface IScheduleWorker<TJobData>
+public interface IScheduleWorker<TData>
 {
-    Task ExecuteAsync(TJobData data);
+    Task ExecuteAsync(TData data);
 }

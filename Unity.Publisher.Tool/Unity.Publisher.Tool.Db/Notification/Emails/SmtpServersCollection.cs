@@ -1,6 +1,4 @@
-﻿using Unity.Publisher.Tool.Infrastructure.Notification.Emails.Models;
-
-namespace Unity.Publisher.Tool.Infrastructure.Notification.Emails;
+﻿namespace Unity.Publisher.Tool.Infrastructure.Notification.Emails;
 
 public sealed class SmtpServersCollection
 {

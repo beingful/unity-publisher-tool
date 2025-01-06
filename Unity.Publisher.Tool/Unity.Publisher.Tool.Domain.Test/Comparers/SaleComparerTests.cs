@@ -1,6 +1,6 @@
 using FluentAssertions;
-using Unity.Publisher.Tool.Domain.Business.Comparers;
-using Unity.Publisher.Tool.Domain.Business.Models;
+using Unity.Publisher.Tool.Domain.Publisher;
+using Unity.Publisher.Tool.Domain.Publisher.Comparers;
 
 namespace Unity.Publisher.Tool.Domain.Test.Comparers;
 

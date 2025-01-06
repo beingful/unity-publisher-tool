@@ -17,10 +17,10 @@ public static class EventsNotificationEndpoint
     {
         endpoints.MapPost("start/notification", (
             PostStartNotificationRequest startNotificationRequest,
-            PublisherNotificationScheduler publisherNotificationScheduler,
+            PublisherEventNotificationService publisherNotificationScheduler,
             CancellationToken cancellationToken) =>
         {
-            publisherNotificationScheduler.Schedule(
+            publisherNotificationScheduler.StartNotifications(
                 events: startNotificationRequest.Events,
                 data: new NotificationDetails(
                     startNotificationRequest.Sender,
@@ -34,10 +34,10 @@ public static class EventsNotificationEndpoint
     {
         endpoints.MapPost("stop/notification", (
             PostStopNotificationRequest stopNotificationRequest,
-            PublisherNotificationScheduler publisherNotificationScheduler,
+            PublisherEventNotificationService publisherNotificationScheduler,
             CancellationToken cancellationToken) =>
         {
-            publisherNotificationScheduler.Unschedule(stopNotificationRequest.Events);
+            publisherNotificationScheduler.StopNotifictions(stopNotificationRequest.Events);
         });
 
         return endpoints;
