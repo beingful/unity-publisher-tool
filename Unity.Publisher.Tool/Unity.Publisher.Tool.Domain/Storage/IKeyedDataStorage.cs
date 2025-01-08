@@ -2,7 +2,7 @@
 
 public interface IKeyedDataStorage
 {
-    void Insert(string key, Dictionary<string, object> data);
+    void Insert(string key, KeyValuePair<string, object> parameter);
 
     TData? Fetch<TData>(string key, string name) where TData : class;
 }

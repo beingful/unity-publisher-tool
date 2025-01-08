@@ -24,13 +24,21 @@ public sealed class MonthlyReportService : IDataSource<PublisherReport>
     public async Task<PublisherReport> GetAsync()
     {
         Task<PublisherInfo> getPublisherTask = _publisherInfoSource.GetAsync();
-        Task<Revenue> getRevenueTask = _revenueSource.GetAsync();
-        Task<PublisherStatement> getStatementTask = _publisherStatementService.RefreshAsync();
+        Task<Revenue> getRevenueForAllPreviousPeriodsTask = _revenueSource.GetAsync();
+        Task<PublisherStatement> getPublisherStatementTask = _publisherStatementService.RefreshAsync();
+
+        Revenue latestRevenue = await getRevenueForAllPreviousPeriodsTask;
+        PublisherStatement publisherStatement = await getPublisherStatementTask;
+
+        decimal revenueFromSales = publisherStatement.AssetsStatements
+            .Sum(asset => asset.Sales.Revenue);
+
+        Revenue totalRevenue = new(total: latestRevenue.Total + revenueFromSales);
 
         return new PublisherReport(
             publisher: await getPublisherTask,
-            revenue: await getRevenueTask,
-            statement: await getStatementTask,
+            revenue: totalRevenue,
+            statement: publisherStatement,
             month: new Month(order: _timestamp.Month));
     }
 }

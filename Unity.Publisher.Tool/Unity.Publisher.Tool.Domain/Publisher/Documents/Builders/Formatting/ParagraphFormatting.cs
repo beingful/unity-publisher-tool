@@ -33,11 +33,7 @@ public class ParagraphFormatting : IFormatting
 
     private string Apply(string text)
     {
-        string indented = Indent.Margin > 0 ? Indent.Apply(text) : text;
-
-        string result = LineFeed.Apply(indented);
-
-        return result;
+        return Indent.Margin > 0 ? Indent.Apply(text) : text;
     }
 
     private string Apply(IReadOnlyCollection<IDocument> innerDocuments)

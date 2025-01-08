@@ -18,9 +18,5 @@ builder.Host
 WebApplication webApp = builder.Build();
 
 startup.Configure(webApp, webApp.Environment);
-//    new WebApplicationOptions
-//{
-//    EnvironmentName = "Production"
-//});
 
 webApp.Run();

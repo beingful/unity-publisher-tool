@@ -1,18 +1,17 @@
-﻿using Unity.Publisher.Tool.Domain.Publisher.Documents;
-using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
+﻿using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
-public class AssetStatementDocumentBuilder : IDocumentParagraphBuilder<AssetStatement>
+public class AssetStatementDocumentBuilder : IParagraphBuilder<AssetStatement>
 {
-    private readonly IDocumentParagraphBuilder<Sales> _salesContentBuilder;
-    private readonly IDocumentParagraphBuilder<Reviews> _reviewsContentBuilder;
-    private readonly IDocumentParagraphBuilder<Download> _downloadsContentBuilder;
+    private readonly IParagraphBuilder<Sales> _salesContentBuilder;
+    private readonly IParagraphBuilder<Reviews> _reviewsContentBuilder;
+    private readonly IParagraphBuilder<Download> _downloadsContentBuilder;
 
     public AssetStatementDocumentBuilder(
-        IDocumentParagraphBuilder<Sales> salesContentBuilder,
-        IDocumentParagraphBuilder<Reviews> reviewsContentBuilder,
-        IDocumentParagraphBuilder<Download> downloadsContentBuilder)
+        IParagraphBuilder<Sales> salesContentBuilder,
+        IParagraphBuilder<Reviews> reviewsContentBuilder,
+        IParagraphBuilder<Download> downloadsContentBuilder)
     {
         _salesContentBuilder = salesContentBuilder;
         _reviewsContentBuilder = reviewsContentBuilder;

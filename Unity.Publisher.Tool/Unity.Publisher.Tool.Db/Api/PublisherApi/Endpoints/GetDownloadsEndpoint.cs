@@ -2,13 +2,16 @@
 
 internal class GetDownloadsEndpoint : PublisherEndpoint
 {
-    public GetDownloadsEndpoint(long publisherId) : base(publisherId)
+    private readonly DateTime _requestTimestamp;
+
+    public GetDownloadsEndpoint(long publisherId, DateTime requestTimestamp) : base(publisherId)
     {
+        _requestTimestamp = requestTimestamp;
     }
 
     public override string Path()
     {
-        int requestedPeriod = DateTime.Now.Year * 100 + DateTime.Now.Month;
+        int requestedPeriod = _requestTimestamp.Year * 100 + _requestTimestamp.Month;
 
         return WithPulisherId($"publisher-info/downloads/{{0}}/{requestedPeriod}.json?package_filter=all");
     }

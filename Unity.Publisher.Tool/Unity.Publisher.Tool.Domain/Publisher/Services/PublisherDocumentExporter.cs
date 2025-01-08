@@ -21,7 +21,7 @@ public class PublisherDocumentExporter<TData>
 
         Message message = new()
         {
-            Subject = $"Unity asset store publisher event: {document.Title.Description}",
+            Subject = $"Unity Asset Store: {document.Title.Description}",
             Body = document.ToString()
         };
 

@@ -15,7 +15,6 @@ internal sealed class GetRevenueResponse : IConvertibleTo<Revenue>
         string[] currentRevenue = MonthlyRevenue.Last();
 
         return new Revenue(
-            forPeriod: currentRevenue[2].ToPrice(),
             total: currentRevenue[4].ToPrice());
     }
 }

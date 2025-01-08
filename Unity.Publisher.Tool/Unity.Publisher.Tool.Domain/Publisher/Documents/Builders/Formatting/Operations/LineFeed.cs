@@ -1,4 +1,6 @@
-﻿namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting.Operations;
+﻿using System.Text;
+
+namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting.Operations;
 
 public class LineFeed : IFormattingOperation
 {
@@ -26,6 +28,55 @@ public class LineFeed : IFormattingOperation
 
         return string.Join('\n', formatted);
     }
+
+    //private string Apply(string text)
+    //{
+    //    List<char> formatted = new(text.Length);
+
+    //    StringBuilder word = new();
+
+    //    int currentLineLength = 0;
+
+    //    string indent = _indent.Apply(string.Empty);
+
+    //    for (int i = 0, j = 0; j < text.Length; ++i)
+    //    {
+    //        if (char.IsWhiteSpace(text[j]))
+    //        {
+    //            if (currentLineLength + word.Length <= _options.LineCapacity)
+    //            {
+    //                formatted.InsertRange(i - word.Length, word.ToString());
+    //            }
+    //            else if (word.Length + indent.Length <= _options.LineCapacity)
+    //            {
+    //                formatted.InsertRange(i - word.Length, $"\n{indent}{word}");
+
+    //                i += indent.Length + 1;
+    //            }
+    //            else
+    //            {
+    //                IEnumerable<char[]> wordChunks = word.ToString()
+    //                    .Chunk(_options.LineCapacity - indent.Length);
+
+    //                int leftToInsert = word.Length;
+
+    //                foreach (char[] chunk in wordChunks)
+    //                {
+    //                    formatted.InsertRange(i - leftToInsert, $"\n{indent}{chunk}");
+
+    //                    leftToInsert -= chunk.Length;
+    //                    i += indent.Length + 1;
+    //                }
+    //            }
+    //        }
+
+    //        word.Append(text[j]);
+
+    //        ++j;
+    //    }
+
+    //    return string.Join(string.Empty, formatted);
+    //}
 
     private string Apply(string text)
     {

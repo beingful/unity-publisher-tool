@@ -9,52 +9,67 @@ namespace Unity.Publisher.Tool.Infrastructure.Scheduling.Hangfire;
 
 public class Scheduler : IScheduler
 {
-    private readonly IStorageConnection _storageConnection;
-    private readonly ILogger<Scheduler> _logger;
     private readonly SchedulingOptions _options;
+    private readonly ILogger<Scheduler> _logger;
 
-    public Scheduler(
-        IStorageConnection storageConnection,
-        ILogger<Scheduler> logger,
-        IOptions<SchedulingOptions> options)
+    public Scheduler(IOptions<SchedulingOptions> options, ILogger<Scheduler> logger)
     {
-        _storageConnection = storageConnection;
-        _logger = logger;
         _options = options.Value;
+        _logger = logger;
     }
 
     public void Schedule<TWorker, TWorkerData>(Job job, TWorkerData data)
         where TWorker : IScheduleWorker<TWorkerData>
     {
+        using IStorageConnection storage = JobStorage.Current.GetConnection();
+
+        List<RecurringJobDto> jobs = storage.GetRecurringJobs();
+
+        if (JobScheduled(job.Id, jobs))
+        {
+            throw new Exception(message: "The job is already scheduled.");
+        }
+        else if (SchedulePacked(jobs))
+        {
+            throw new Exception(message: $"Schedule is packed with {_options.JobsLimit} jobs.");
+        }
+
         RecurringJob.AddOrUpdate<TWorker>(
             recurringJobId: job.Id,
             methodCall: worker => worker.ExecuteAsync(data),
-            cronExpression: TriggerTimeToCronConverter.Convert(job.Time),
+            cronExpression: TriggerTimeToCronConverter.Convert(job.TriggerTime),
             options: new RecurringJobOptions { TimeZone = TimeZoneInfo.Utc });
     }
 
     public void Unschedule(string jobId)
     {
-        RecurringJob.RemoveIfExists(jobId);
+        using IStorageConnection storage = JobStorage.Current.GetConnection();
+
+        List<RecurringJobDto> jobs = storage.GetRecurringJobs();
+
+        if (JobScheduled(jobId, jobs) == false)
+        {
+            throw new Exception(message: "The job either is already unscheduled or was never scheduled.");
+        }
+
+        using (storage.AcquireDistributedJobLock(jobId, TimeSpan.FromSeconds(5)))
+        {
+            using IWriteOnlyTransaction transaction = storage.CreateWriteTransaction();
+
+            transaction.RemoveHash($"job:{jobId}");
+            transaction.RemoveHash($"recurring-job:{jobId}");
+            transaction.RemoveFromSet("recurring-jobs", jobId);
+            transaction.Commit();
+        }
     }
 
-    public bool CanSchedule(string jobId)
+    private bool JobScheduled(string jobId, List<RecurringJobDto> jobs)
     {
-        return (SchedulePacked() || JobScheduled(jobId)) == false;
+        return jobs.Any(x => x.Id == jobId);
     }
 
-    public bool CanUnschedule(string jobId)
+    private bool SchedulePacked(List<RecurringJobDto> jobs)
     {
-        return JobScheduled(jobId);
-    }
-
-    private bool SchedulePacked()
-    {
-        return _storageConnection.GetRecurringJobs().Count >= _options.JobsLimit;
-    }
-
-    private bool JobScheduled(string jobId)
-    {
-        return _storageConnection.GetRecurringJobs().Any(x => x.Id == jobId);
+        return jobs.Count >= _options.JobsLimit;
     }
 }

@@ -8,8 +8,4 @@ public interface IScheduler
         where TWorker : IScheduleWorker<TWorkerData>;
 
     void Unschedule(string jobId);
-
-    bool CanSchedule(string jobId);
-
-    bool CanUnschedule(string jobId);
 }

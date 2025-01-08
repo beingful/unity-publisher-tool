@@ -3,8 +3,8 @@
 public sealed class Sale
 {
     public readonly ProductTag ProductTag;
-    public  int CopiesSold;
-    public  decimal Revenue;
+    public readonly int CopiesSold;
+    public readonly decimal Revenue;
 
     public Sale(ProductTag productTag, int copiesSold, decimal revenue)
     {

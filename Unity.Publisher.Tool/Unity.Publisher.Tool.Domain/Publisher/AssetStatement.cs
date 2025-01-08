@@ -4,7 +4,7 @@ public class AssetStatement
 {
     public readonly Asset Asset;
 
-    public  Sales Sales;
+    public readonly Sales Sales;
 
     public readonly Reviews Reviews;
 

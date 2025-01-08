@@ -1,6 +1,5 @@
 ﻿using Autofac;
 using Hangfire;
-using Hangfire.Storage;
 using Microsoft.Extensions.Options;
 using Unity.Publisher.Tool.Domain.General;
 using Unity.Publisher.Tool.Domain.Notifications;
@@ -131,14 +130,7 @@ public static class InfrastructureServiceInjection
     private static ContainerBuilder AddScheduleServices(this ContainerBuilder container)
     {
         container
-            .Register<IStorageConnection>(context =>
-            {
-                return JobStorage.Current.GetConnection();
-            })
-            .InstancePerLifetimeScope();
-
-        container
-            .RegisterType<ScheduleDataStorage>()
+            .RegisterType<JobDataStorage>()
             .As<IKeyedDataStorage>()
             .InstancePerLifetimeScope();
 

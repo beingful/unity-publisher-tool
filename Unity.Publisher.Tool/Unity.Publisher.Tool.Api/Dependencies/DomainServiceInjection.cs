@@ -74,55 +74,51 @@ public static class DomainServiceInjection
         container
             .RegisterType<PublisherReportDocumentBuilder>()
             .As<IDocumentBuilder<PublisherReport>>()
-            .InstancePerLifetimeScope()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<PublisherStatementDocumentBuilder>()
             .As<IDocumentBuilder<PublisherStatement>>()
-            .InstancePerLifetimeScope()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<PublisherStatementDocumentBuilder>()
-            .As<IDocumentParagraphBuilder<PublisherStatement>>()
-            .InstancePerLifetimeScope()
+            .As<IParagraphBuilder<PublisherStatement>>()
+            .InstancePerBackgroundJob();
+
+        container
+            .RegisterType<PublisherInfoDocumentBuilder>()
+            .As<IParagraphBuilder<PublisherInfo>>()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<AssetStatementDocumentBuilder>()
-            .As<IDocumentParagraphBuilder<AssetStatement>>()
-            .InstancePerLifetimeScope()
+            .As<IParagraphBuilder<AssetStatement>>()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<SalesDocumentBuilder>()
-            .As<IDocumentParagraphBuilder<Sales>>()
-            .InstancePerLifetimeScope()
+            .As<IParagraphBuilder<Sales>>()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<SaleDocumentBuilder>()
-            .As<IDocumentParagraphBuilder<Sale>>()
-            .InstancePerLifetimeScope()
+            .As<IParagraphBuilder<Sale>>()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<ReviewsDocumentBuilder>()
-            .As<IDocumentParagraphBuilder<Reviews>>()
-            .InstancePerLifetimeScope()
+            .As<IParagraphBuilder<Reviews>>()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<ReviewDocumentBuilder>()
-            .As<IDocumentParagraphBuilder<Review>>()
-            .InstancePerLifetimeScope()
+            .As<IParagraphBuilder<Review>>()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<DownloadDocumentBuilder>()
-            .As<IDocumentParagraphBuilder<Download>>()
-            .InstancePerLifetimeScope()
+            .As<IParagraphBuilder<Download>>()
             .InstancePerBackgroundJob();
 
         container

@@ -13,23 +13,38 @@ public class PublisherEventNotificationService
         _sbscribers = subscribers;
     }
 
-    public void StartNotifications(PublisherEvent[] events, NotificationDetails data)
+    public ActionResult[] StartNotifications(PublisherEvent[] events, NotificationDetails data)
     {
-        foreach (PublisherEvent publisherEvent in events)
-        {
-            IPublisherEventNotificationSubscriber scheduler = _sbscribers.Provide(publisherEvent);
-
-            scheduler.Subscribe(data);
-        }
+        return ApplyToAll(events, subscriber => subscriber.Subscribe(data));
     }
 
-    public void StopNotifictions(PublisherEvent[] events)
+    public ActionResult[] StopNotifictions(PublisherEvent[] events)
     {
-        foreach (PublisherEvent publisherEvent in events)
-        {
-            IPublisherEventNotificationSubscriber scheduler = _sbscribers.Provide(publisherEvent);
+        return ApplyToAll(events, subscriber => subscriber.Unsubscribe());
+    }
 
-            scheduler.Unsubscribe();
+    private ActionResult[] ApplyToAll(PublisherEvent[] events, Action<IPublisherEventNotificationSubscriber> subscriberAction)
+    {
+        ActionResult[] subscriberActionResults = new ActionResult[events.Length];
+
+        for (int i = 0; i < events.Length; ++i)
+        {
+            PublisherEvent pulisherEvent = events[i];
+
+            IPublisherEventNotificationSubscriber subscriber = _sbscribers.Provide(pulisherEvent);
+
+            try
+            {
+                subscriberAction(subscriber);
+
+                subscriberActionResults[i] = ActionResult.OnSuccess(pulisherEvent);
+            }
+            catch (Exception exception)
+            {
+                subscriberActionResults[i] = ActionResult.OnFail(pulisherEvent, exception.Message);
+            }
         }
+
+        return subscriberActionResults;
     }
 }

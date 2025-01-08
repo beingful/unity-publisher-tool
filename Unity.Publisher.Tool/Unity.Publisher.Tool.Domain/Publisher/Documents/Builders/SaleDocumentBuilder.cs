@@ -1,9 +1,8 @@
-﻿using Unity.Publisher.Tool.Domain.Publisher.Documents;
-using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
+﻿using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
-public class SaleDocumentBuilder : IDocumentParagraphBuilder<Sale>
+public class SaleDocumentBuilder : IParagraphBuilder<Sale>
 {
     public IDocument Build(Sale sale)
     {
@@ -16,7 +15,6 @@ public class SaleDocumentBuilder : IDocumentParagraphBuilder<Sale>
 
     private string Content(Sale sale)
     {
-        return $"{sale.CopiesSold} copies sold " +
-            $"at ${sale.ProductTag.Price} each.";
+        return $"{sale.CopiesSold} copies sold at ${sale.ProductTag.Price} each.";
     }
 }

@@ -3,11 +3,11 @@
 public class Job
 {
     public readonly string Id;
-    public readonly TriggerTime Time;
+    public readonly TriggerTime TriggerTime;
 
-    public Job(string id, TriggerTime time)
+    public Job(string id, TriggerTime triggerTime)
     {
         Id = id;
-        Time = time;
+        TriggerTime = triggerTime;
     }
 }

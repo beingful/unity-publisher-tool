@@ -1,14 +1,13 @@
-﻿using Unity.Publisher.Tool.Domain.Publisher.Documents;
-using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
+﻿using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
 public class PublisherStatementDocumentBuilder
-    : IDocumentBuilder<PublisherStatement>, IDocumentParagraphBuilder<PublisherStatement>
+    : IDocumentBuilder<PublisherStatement>, IParagraphBuilder<PublisherStatement>
 {
-    private readonly IDocumentParagraphBuilder<AssetStatement> _contentBuilder;
+    private readonly IParagraphBuilder<AssetStatement> _contentBuilder;
 
-    public PublisherStatementDocumentBuilder(IDocumentParagraphBuilder<AssetStatement> contentBuilder)
+    public PublisherStatementDocumentBuilder(IParagraphBuilder<AssetStatement> contentBuilder)
     {
         _contentBuilder = contentBuilder;
     }
@@ -31,7 +30,7 @@ public class PublisherStatementDocumentBuilder
         return document;
     }
 
-    IDocument IDocumentParagraphBuilder<PublisherStatement>.Build(PublisherStatement statement)
+    IDocument IParagraphBuilder<PublisherStatement>.Build(PublisherStatement statement)
     {
         Content content = new(
             text: Content(),

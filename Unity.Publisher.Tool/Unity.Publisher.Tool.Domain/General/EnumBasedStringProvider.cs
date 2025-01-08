@@ -6,15 +6,15 @@ namespace Unity.Publisher.Tool.Domain.General;
 public class EnumBasedStringProvider<TEnum> : IPublisherEventIdProvider, IStorageKeyProvider
     where TEnum : notnull
 {
-    private readonly TEnum _data;
+    private readonly TEnum _seed;
 
-    public EnumBasedStringProvider(TEnum data)
+    public EnumBasedStringProvider(TEnum seed)
     {
-        _data = data;
+        _seed = seed;
     }
 
     public string Provide()
     {
-        return Enum.GetName(typeof(TEnum), _data)!.ToLower();
+        return Enum.GetName(typeof(TEnum), _seed)!.ToLower();
     }
 }

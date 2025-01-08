@@ -1,9 +1,8 @@
-﻿using Unity.Publisher.Tool.Domain.Publisher.Documents;
-using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
+﻿using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
-public class ReviewDocumentBuilder : IDocumentParagraphBuilder<Review>
+public class ReviewDocumentBuilder : IParagraphBuilder<Review>
 {
     public IDocument Build(Review review)
     {
@@ -16,8 +15,8 @@ public class ReviewDocumentBuilder : IDocumentParagraphBuilder<Review>
 
     public string Content(Review review)
     {
-        return $"Rating: {review.Rating}" +
-            $"Subject: {review.Subject}" +
+        return $"Rating: {review.Rating}\n" +
+            $"Subject: {review.Subject}\n" +
             $"Body: {review.Body}";
     }
 }

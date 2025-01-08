@@ -1,15 +1,18 @@
-﻿using Unity.Publisher.Tool.Domain.Publisher.Documents;
-using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
+﻿using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
 public class PublisherReportDocumentBuilder : IDocumentBuilder<PublisherReport>
 {
-    private readonly IDocumentParagraphBuilder<PublisherStatement> _contentBuilder;
+    private readonly IParagraphBuilder<PublisherInfo> _publisherInfoContentBuilder;
+    private readonly IParagraphBuilder<PublisherStatement> _publisherStatementContentBuilder;
 
-    public PublisherReportDocumentBuilder(IDocumentParagraphBuilder<PublisherStatement> contentBuilder)
+    public PublisherReportDocumentBuilder(
+        IParagraphBuilder<PublisherInfo> publisherInfoContentBuilder,
+        IParagraphBuilder<PublisherStatement> publisherStatementContentBuilder)
     {
-        _contentBuilder = contentBuilder;
+        _publisherInfoContentBuilder = publisherInfoContentBuilder;
+        _publisherStatementContentBuilder = publisherStatementContentBuilder;
     }
 
     public IDocument Build(PublisherReport report)
@@ -21,22 +24,25 @@ public class PublisherReportDocumentBuilder : IDocumentBuilder<PublisherReport>
             formatting: new DocumentFormatting(
                 baseFormatting: new ParagraphFormatting()));
 
-        return Document.Create(title, content)
-            .AddInner(NestedDocument(report.Statement));
+        Document document = Document.Create(title, content);
+
+        InnerDocuments(report).ForEach(inner => document.AddInner(inner));
+
+        return document;
     }
 
     private string Content(PublisherReport report)
     {
-        return "REPORT\n\n" +
-            $"Publisher: {report.Publisher.Name}\n" +
-            $"Publisher rating: {report.Publisher.Rating.Average}\n" +
-            $"This month revenue: {report.Revenue.ForPeriod}\n" +
-            $"Total revenue: {report.Revenue.Total}\n" +
-            $"Month reported: {report.Month.Name}\n";
+        return $"REPORT FOR {report.Month.Name}:\n\n" +
+            $"Total revenue: ${report.Revenue.Total}.\n";
     }
 
-    private IDocument NestedDocument(PublisherStatement statement)
+    private List<IDocument> InnerDocuments(PublisherReport report)
     {
-        return _contentBuilder.Build(statement);
+        return new List<IDocument>()
+        {
+            _publisherInfoContentBuilder.Build(report.Publisher),
+            _publisherStatementContentBuilder.Build(report.Statement)
+        };
     }
 }

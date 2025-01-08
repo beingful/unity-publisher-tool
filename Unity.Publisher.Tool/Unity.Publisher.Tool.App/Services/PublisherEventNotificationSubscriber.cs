@@ -7,12 +7,12 @@ namespace Unity.Publisher.Tool.App.Services;
 
 public abstract class PublisherEventNotificationSubscriber : IPublisherEventNotificationSubscriber
 {
-    private readonly IPublisherEventIdProvider _idProvider;
+    private readonly IPublisherEventIdProvider _jobIdProvider;
     private readonly IScheduler _scheduler;
 
-    public PublisherEventNotificationSubscriber(IPublisherEventIdProvider idProvider, IScheduler scheduler)
+    public PublisherEventNotificationSubscriber(IPublisherEventIdProvider jobIdProvider, IScheduler scheduler)
     {
-        _idProvider = idProvider;
+        _jobIdProvider = jobIdProvider;
         _scheduler = scheduler;
     }
 
@@ -20,24 +20,18 @@ public abstract class PublisherEventNotificationSubscriber : IPublisherEventNoti
 
     public void Unsubscribe()
     {
-        string jobId = _idProvider.Provide();
+        string jobId = _jobIdProvider.Provide();
 
-        if (_scheduler.CanUnschedule(jobId))
-        {
-            _scheduler.Unschedule(jobId);
-        }
+        _scheduler.Unschedule(jobId);
     }
 
-    protected void Schedule<TScheduleWorker>(TriggerTime trigger, NotificationDetails notificationDetails)
+    protected void Schedule<TScheduleWorker>(TriggerTime triggerTime, NotificationDetails notificationDetails)
         where TScheduleWorker : IScheduleWorker<NotificationDetails>
     {
-        string jobId = _idProvider.Provide();
+        string jobId = _jobIdProvider.Provide();
 
-        if (_scheduler.CanSchedule(jobId))
-        {
-            _scheduler.Schedule<TScheduleWorker, NotificationDetails>(
-                job: new Job(jobId, trigger),
-                workerData: new NotificationDetails(notificationDetails.Sender, notificationDetails.Receiver));
-        }
+        Job job = new(jobId, triggerTime);
+
+        _scheduler.Schedule<TScheduleWorker, NotificationDetails>(job, notificationDetails);
     }
 }

@@ -4,9 +4,9 @@ public sealed class Download
 {
     public readonly string Product;
 
-    public  int Downloads;
+    public readonly int Downloads;
 
-    public  int Downloaders;
+    public readonly int Downloaders;
 
     public Download(string product, int downloads, int downloaders)
     {

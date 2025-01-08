@@ -1,17 +1,17 @@
 ﻿using Hangfire.Storage;
+using Hangfire;
 using System.Text.Json;
 using Unity.Publisher.Tool.Domain.Storage;
 
 namespace Unity.Publisher.Tool.Infrastructure.Scheduling.Hangfire;
 
-public class ScheduleDataStorage : IKeyedDataStorage
+public class JobDataStorage : IKeyedDataStorage
 {
-    private readonly IStorageConnection _storageConnection;
     private readonly JsonSerializerOptions? _serializerOptions;
 
     private readonly static JsonSerializerOptions? _defaultSerializerOptions;
 
-    static ScheduleDataStorage()
+    static JobDataStorage()
     {
         _defaultSerializerOptions = new JsonSerializerOptions
         {
@@ -21,26 +21,26 @@ public class ScheduleDataStorage : IKeyedDataStorage
         };
     }
 
-    public ScheduleDataStorage(IStorageConnection storageConnection, JsonSerializerOptions? serializerOptions = null)
+    public JobDataStorage(JsonSerializerOptions? serializerOptions = null)
     {
-        _storageConnection = storageConnection;
         _serializerOptions = serializerOptions ?? _defaultSerializerOptions;
     }
 
-    public void Insert(string jobId, Dictionary<string, object> data)
+    public void Insert(string jobId, KeyValuePair<string, object> parameter)
     {
-        foreach (KeyValuePair<string, object> entry in data)
-        {
-            _storageConnection.SetJobParameter(
-                id: jobId,
-                name: entry.Key,
-                value: JsonSerializer.Serialize(entry.Value, _serializerOptions));
-        }
+        using IStorageConnection storage = JobStorage.Current.GetConnection();
+
+        storage.SetJobParameter(
+            id: jobId,
+            name: parameter.Key,
+                value: JsonSerializer.Serialize(parameter.Value, _serializerOptions));
     }
 
     public TData? Fetch<TData>(string jobId, string parameterName) where TData : class
     {
-        string? parameter = _storageConnection.GetJobParameter(jobId, parameterName);
+        using IStorageConnection storage = JobStorage.Current.GetConnection();
+
+        string? parameter = storage.GetJobParameter(jobId, parameterName);
 
         return string.IsNullOrWhiteSpace(parameter)
             ? null

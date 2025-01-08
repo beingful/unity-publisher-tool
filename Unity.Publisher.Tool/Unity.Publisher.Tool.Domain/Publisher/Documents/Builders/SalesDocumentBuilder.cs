@@ -1,13 +1,12 @@
-﻿using Unity.Publisher.Tool.Domain.Publisher.Documents;
-using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
+﻿using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
-public class SalesDocumentBuilder : IDocumentParagraphBuilder<Sales>
+public class SalesDocumentBuilder : IParagraphBuilder<Sales>
 {
-    private readonly IDocumentParagraphBuilder<Sale> _contentBuilder;
+    private readonly IParagraphBuilder<Sale> _contentBuilder;
 
-    public SalesDocumentBuilder(IDocumentParagraphBuilder<Sale> contentBuilder)
+    public SalesDocumentBuilder(IParagraphBuilder<Sale> contentBuilder)
     {
         _contentBuilder = contentBuilder;
     }

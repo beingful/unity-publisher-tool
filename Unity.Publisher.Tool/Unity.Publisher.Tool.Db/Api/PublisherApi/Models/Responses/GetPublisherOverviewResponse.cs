@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 using Unity.Publisher.Tool.Domain.General;
 using Unity.Publisher.Tool.Domain.Publisher;
-using Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Models;
 
 namespace Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Models.Responses;
 

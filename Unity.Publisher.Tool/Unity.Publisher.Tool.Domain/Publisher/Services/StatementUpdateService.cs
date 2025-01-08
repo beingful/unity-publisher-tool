@@ -35,18 +35,9 @@ public class StatementUpdateService : IDataSource<PublisherStatement>
 
             update = PublisherStatement.Empty();
         }
-
-        refreshedStatement.AssetsStatements[0].Sales = new Sales([ new Sale(
-            productTag: new ProductTag(product: "2D Laser system", price: 10),
-            copiesSold: 1,
-            revenue: 10)]);
-        //refreshedStatement.AssetsStatements[0].Sales[0].Revenue += 10;
-        refreshedStatement.AssetsStatements[0].Downloads.Downloads += 5;
-        refreshedStatement.AssetsStatements[0].Downloads.Downloaders += 1;
-
-        if (_publisherStatementComparer.Different(refreshedStatement, storedStatement))
+        else if (_publisherStatementComparer.Different(refreshedStatement, storedStatement))
         {
-            //_publisherEventDataStorage.Set(refreshedStatement);
+            _dataStorage.Set(refreshedStatement);
 
             update = _publisherStatementComparer.Difference(refreshedStatement, storedStatement);
         }

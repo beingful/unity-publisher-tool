@@ -20,10 +20,9 @@ public class DataStorage : IDataStorage
     {
         _dataStorage.Insert(
             key: _storageKeyProvider.Provide(),
-            data: new Dictionary<string, object>()
-            {
-                { _dataNameProvider.Provide<TData>(), data }
-            });
+            parameter: new KeyValuePair<string, object>(
+                key: _dataNameProvider.Provide<TData>(),
+                value: data));
     }
 
     public TData? Fetch<TData>() where TData : class

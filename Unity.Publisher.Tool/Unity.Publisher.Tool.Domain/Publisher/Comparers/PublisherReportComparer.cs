@@ -14,8 +14,7 @@ public class PublisherReportComparer : IDataComparer<PublisherReport>
     public bool Different(PublisherReport first, PublisherReport second)
     {
         return first.Month.Order == second.Month.Order
-            && (first.Revenue.ForPeriod != second.Revenue.ForPeriod
-                || _statementComparer.Different(first.Statement, second.Statement));
+            && _statementComparer.Different(first.Statement, second.Statement);
     }
 
     public PublisherReport Difference(PublisherReport left, PublisherReport right)

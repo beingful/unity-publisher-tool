@@ -1,9 +1,8 @@
-﻿using Unity.Publisher.Tool.Domain.Publisher.Documents;
-using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
+﻿using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
-public class DownloadDocumentBuilder : IDocumentParagraphBuilder<Download>
+public class DownloadDocumentBuilder : IParagraphBuilder<Download>
 {
     public IDocument Build(Download dowload)
     {

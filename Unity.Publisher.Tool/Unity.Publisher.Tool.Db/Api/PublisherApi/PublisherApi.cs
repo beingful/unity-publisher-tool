@@ -18,7 +18,7 @@ public class PublisherApi : StatefulApi, IStartable,
     IDataSource<Reviews>,
     IDataSource<Downloads>
 {
-    private readonly DateTime _now;
+    private readonly DateTime _timestamp;
 
     public PublisherApi(
         IHttpClient<PublisherApi> httpClient,
@@ -26,7 +26,7 @@ public class PublisherApi : StatefulApi, IStartable,
         ILogger<PublisherApi> logger,
         DateTime now) : base(httpClient, sessionManager, logger)
     {
-        _now = now;
+        _timestamp = now;
     }
 
     internal static PublisherProfile? Publisher { get; private set; }
@@ -45,7 +45,7 @@ public class PublisherApi : StatefulApi, IStartable,
 
     async Task<Sales> IDataSource<Sales>.GetAsync()
     {
-        GetSalesEndpoint salesEndpoint = new(Publisher!.Id);
+        GetSalesEndpoint salesEndpoint = new(Publisher!.Id, _timestamp);
 
         return await GetAsync<GetSalesResponse, Sales>(salesEndpoint.Path());
     }
@@ -57,15 +57,13 @@ public class PublisherApi : StatefulApi, IStartable,
         Reviews reviews = await GetAsync<GetReviewsResponse, Reviews>(reviewsEndpoint.Path());
 
         return new Reviews(reviews.Collection
-            .Where(x => x.Created.Month == _now.Month)
+            .Where(x => x.Created.Month == _timestamp.Month)
             .ToArray());
     }
 
     async Task<Downloads> IDataSource<Downloads>.GetAsync()
     {
-        GetDownloadsEndpoint downloadsEndpoint = new(Publisher!.Id);
-
-        string path = downloadsEndpoint.Path();
+        GetDownloadsEndpoint downloadsEndpoint = new(Publisher!.Id, _timestamp);
 
         return await GetAsync<GetDownloadsResponse, Downloads>(downloadsEndpoint.Path());
     }
