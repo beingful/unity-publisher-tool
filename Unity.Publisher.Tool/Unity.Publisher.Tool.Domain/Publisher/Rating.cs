@@ -2,23 +2,25 @@
 
 public class Rating
 {
-    public readonly int Count;
+    public readonly double Value;
 
-    public readonly double Average;
+    private readonly double _outOf;
 
-    private readonly double _maximum;
-
-    public Rating(int count, double average, double maximum = 5)
+    public Rating(double value, double outOf = 5)
     {
-        Count = count;
-        Average = average;
-        _maximum = maximum;
+        Value = value;
+        _outOf = outOf;
     }
 
-    public double Maximum => _maximum;
+    public double OutOf => _outOf;
 
     public static Rating Zero()
     {
-        return new Rating(0, 0);
+        return new Rating(0);
+    }
+
+    public override string ToString()
+    {
+        return $"{Value}/{_outOf}";
     }
 }

@@ -16,6 +16,6 @@ public class PublisherInfoDocumentBuilder : IParagraphBuilder<PublisherInfo>
     private string Content(PublisherInfo publisher)
     {
         return $"Publisher: {publisher.Name}.\n" +
-            $"Publisher rating: {publisher.Rating.Average}/{publisher.Rating.Maximum}.";
+            $"Publisher rating: {publisher.Rating}.";
     }
 }

@@ -15,7 +15,10 @@ public class ReviewsDocumentBuilder : IParagraphBuilder<Reviews>
     {
         Content content = new(
             text: Content(),
-            formatting: new ParagraphFormatting());
+            formatting: new ParagraphFormatting(new FormattingOptions
+            {
+                Separator = '*'
+            }));
 
         Document document = Document.CreateParagraph(content);
 

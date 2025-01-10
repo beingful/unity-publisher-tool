@@ -21,7 +21,7 @@ internal sealed class GetReviewsResponse : IConvertibleTo<Reviews>
                 Reviews[i].Asset,
                 Reviews[i].Subject,
                 Reviews[i].Body,
-                Reviews[i].Rating,
+                new Rating(Reviews[i].Rating),
                 Reviews[i].Created);
         }
 

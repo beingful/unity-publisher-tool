@@ -13,14 +13,14 @@ public partial class ReviewsComparerTest
                     product: "Product",
                     subject: "Cool!",
                     body: "Cool Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now),
                 new Review(
                     id: 2,
                     product: "Product",
                     subject: "Cool!",
                     body: "Cool Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now)
             ]);
 
@@ -31,14 +31,14 @@ public partial class ReviewsComparerTest
                     product: "Product",
                     subject: "Cool!",
                     body: "Cool Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now),
                 new Review(
                     id: 2,
                     product: "Product",
                     subject: "Cool!",
                     body: "Cool Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now)
             ]);
 
@@ -49,14 +49,14 @@ public partial class ReviewsComparerTest
                     product: "Product",
                     subject: "Nice!",
                     body: "Nice Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now),
                 new Review(
                     id: 2,
                     product: "Product",
                     subject: "Nice!",
                     body: "Nice Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now)
             ]);
 
@@ -76,14 +76,14 @@ public partial class ReviewsComparerTest
                     product: "Product",
                     subject: "Cool!",
                     body: "Cool Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now),
                 new Review(
                     id: 2,
                     product: "Product",
                     subject: "Cool!",
                     body: "Cool Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now)
             ]);
 
@@ -94,21 +94,21 @@ public partial class ReviewsComparerTest
                     product: "Product",
                     subject: "Cool!",
                     body: "Cool Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now),
                 new Review(
                     id: 2,
                     product: "Product",
                     subject: "Cool!",
                     body: "Cool Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now),
                 new Review(
                     id: 3,
                     product: "Product",
                     subject: "Cool!",
                     body: "Cool Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now)
             ]);
 
@@ -119,7 +119,7 @@ public partial class ReviewsComparerTest
                     product: "Product",
                     subject: "Nice!",
                     body: "Nice Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now)
             ]);
 
@@ -130,14 +130,14 @@ public partial class ReviewsComparerTest
                     product: "Product",
                     subject: "Nice!",
                     body: "Nice Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now),
                 new Review(
                     id: 5,
                     product: "Product",
                     subject: "Nice!",
                     body: "Nice Product!",
-                    rating: 5,
+                    rating: new Rating(5),
                     created: DateTime.Now)
             ]);
 
@@ -159,7 +159,7 @@ public partial class ReviewsComparerTest
             product: "Product",
             subject: "Cool!",
             body: "Cool Product!",
-            rating: 5,
+            rating: new Rating(5),
             created: now);
 
         Review secondReview = new(
@@ -167,7 +167,7 @@ public partial class ReviewsComparerTest
             product: "Product",
             subject: "Cool!",
             body: "Cool Product!",
-            rating: 5,
+            rating: new Rating(5),
             created: now);
 
         Reviews reviews = new(collection: [firstReview, secondReview]);
@@ -190,7 +190,7 @@ public partial class ReviewsComparerTest
             product: "Product",
             subject: "Cool!",
             body: "Cool Product!",
-            rating: 5,
+            rating: new Rating(5),
             created: now);
 
         Review firstReviewUpdated = new(
@@ -198,7 +198,7 @@ public partial class ReviewsComparerTest
             product: "Product",
             subject: "Nice!",
             body: "Nice Product!",
-            rating: 5,
+            rating: new Rating(5),
             created: now);
 
         Review secondReview = new(
@@ -206,7 +206,7 @@ public partial class ReviewsComparerTest
             product: "Product",
             subject: "Cool!",
             body: "Cool Product!",
-            rating: 5,
+            rating: new Rating(5),
             created: now);
 
         Review thirdReview = new(
@@ -214,7 +214,7 @@ public partial class ReviewsComparerTest
             product: "Product",
             subject: "Cool!",
             body: "Cool Product!",
-            rating: 3,
+            rating: new Rating(5),
             created: now);
 
         Reviews reviews = new(collection: [firstReview, secondReview]);

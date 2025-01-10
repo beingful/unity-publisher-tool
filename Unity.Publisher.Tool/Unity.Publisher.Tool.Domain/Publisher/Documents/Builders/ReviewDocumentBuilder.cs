@@ -15,8 +15,8 @@ public class ReviewDocumentBuilder : IParagraphBuilder<Review>
 
     public string Content(Review review)
     {
-        return $"Rating: {review.Rating}\n" +
-            $"Subject: {review.Subject}\n" +
+        return $"Rating: {review.Rating}\n\n" +
+            $"Subject: {review.Subject}\n\n" +
             $"Body: {review.Body}";
     }
 }

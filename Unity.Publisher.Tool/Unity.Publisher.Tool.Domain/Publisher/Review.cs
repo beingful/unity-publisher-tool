@@ -10,12 +10,12 @@ public sealed class Review
 
     public readonly string Body;
 
-    public readonly float Rating;
+    public readonly Rating Rating;
 
     public readonly DateTime Created;
 
     public Review(long id, string product, string subject,
-        string body, int rating, DateTime created)
+        string body, Rating rating, DateTime created)
     {
         Id = id;
         Product = product;

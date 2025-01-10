@@ -15,7 +15,10 @@ public class SalesDocumentBuilder : IParagraphBuilder<Sales>
     {
         Content content = new(
             text: Content(sales),
-            formatting: new ParagraphFormatting());
+            formatting: new ParagraphFormatting(new FormattingOptions
+            {
+                Separator = '*'
+            }));
 
         Document document = Document.CreateParagraph(content);
 
