@@ -16,10 +16,10 @@ public class PublisherPortalAction
         _unityPortalPageEndpoint = new GetSalesPageEndpoint();
     }
 
-    public async Task<CallbackPageResult> RequestPageAsync()
+    public async Task<CallbackPageResult> RequestPageAsync(CancellationToken cancellationToken = default)
     {
         IHtmlHttpResponse bounceCallbackResponse = await _httpClient
-            .GetAsync<IHtmlHttpResponse>(_unityPortalPageEndpoint.Path());
+            .GetAsync<IHtmlHttpResponse>(_unityPortalPageEndpoint.Path(), cancellationToken);
 
         return new CallbackPageResult(HtmlContent: bounceCallbackResponse.Content);
     }

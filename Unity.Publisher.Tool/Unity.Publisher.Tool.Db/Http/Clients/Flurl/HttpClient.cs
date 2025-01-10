@@ -27,12 +27,13 @@ public class HttpClient : IHttpClient
         return _defaultHttpClient.GetCookie(name);
     }
 
-    public async Task GetAsync(string? endpoint = null)
+    public Task GetAsync(string? endpoint = null, CancellationToken cancellationToken = default)
     {
-        await _defaultHttpClient.GetAsync(endpoint);
+        return _defaultHttpClient.GetAsync(endpoint, cancellationToken);
     }
 
-    public async Task<THttpResponse> GetAsync<THttpResponse>(string? endpoint)
+    public Task<THttpResponse> GetAsync<THttpResponse>(string? endpoint,
+        CancellationToken cancellationToken = default)
         where THttpResponse : IHttpResponse
     {
         IFlurlRequest httpRequest = _defaultHttpClient
@@ -40,16 +41,17 @@ public class HttpClient : IHttpClient
             .SetMethod(HttpMethod.Get)
             .Build();
 
-        return await SendAsync<THttpResponse>(httpRequest);
+        return SendAsync<THttpResponse>(httpRequest, cancellationToken);
     }
 
-    public async Task PostAsync(object? content = null, string? endpoint = null)
+    public Task PostAsync(object? content = null, string? endpoint = null,
+        CancellationToken cancellationToken = default)
     {
-        await _defaultHttpClient.PostAsync(content, endpoint);
+        return _defaultHttpClient.PostAsync(content, endpoint, cancellationToken);
     }
 
-    public async Task<THttpResponse> PostUrlEncodedAsync<THttpResponse>(object content, string? endpoint)
-        where THttpResponse : IHttpResponse
+    public Task<THttpResponse> PostUrlEncodedAsync<THttpResponse>(
+        object content, string? endpoint, CancellationToken cancellationToken = default) where THttpResponse : IHttpResponse
     {
         IFlurlRequest httpRequest = _defaultHttpClient
             .Request(endpoint)
@@ -57,15 +59,16 @@ public class HttpClient : IHttpClient
             .SetMethod(HttpMethod.Post)
             .Build();
 
-        return await SendAsync<THttpResponse>(httpRequest);
+        return SendAsync<THttpResponse>(httpRequest, cancellationToken);
     }
 
-    private async Task<THttpResponse> SendAsync<THttpResponse>(IFlurlRequest httpRequest)
-        where THttpResponse : IHttpResponse
+    private async Task<THttpResponse> SendAsync<THttpResponse>(
+        IFlurlRequest httpRequest,
+        CancellationToken cancellationToken) where THttpResponse : IHttpResponse
     {
         TypedHttpClient typedHttpClient = _typedHttpClients[typeof(THttpResponse)];
 
-        IHttpResponse httpResponse = await typedHttpClient.SendAsync(httpRequest);
+        IHttpResponse httpResponse = await typedHttpClient.SendAsync(httpRequest, cancellationToken);
 
         return (THttpResponse)httpResponse;
     }

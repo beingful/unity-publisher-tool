@@ -17,12 +17,12 @@ public class EmailNotificator : INotificator<EmailNotification>
         _logger = logger;
     }
 
-    public async Task SendAsync(EmailNotification notification, CancellationToken cancellationToken)
+    public Task SendAsync(EmailNotification notification, CancellationToken cancellationToken = default)
     {
         SmtpServer smtpServer = _smtpServers[notification.EmailServer];
         MimeMessage message = BuildMessage(notification);
 
-        await SendAsync(message, smtpServer, notification.Sender.Account, cancellationToken);
+        return SendAsync(message, smtpServer, notification.Sender.Account, cancellationToken);
     }
 
     private MimeMessage BuildMessage(INotification<EmailContent> notification)

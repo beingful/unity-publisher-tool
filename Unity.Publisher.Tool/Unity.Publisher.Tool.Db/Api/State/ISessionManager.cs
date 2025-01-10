@@ -4,7 +4,7 @@ public interface ISessionManager
 {
     bool IsSessionAlive();
 
-    Task SetUpSessionAsync();
+    Task SetUpSessionAsync(CancellationToken cancellationToken = default);
 }
 
 public interface ISessionManager<out TExternalApi> : ISessionManager

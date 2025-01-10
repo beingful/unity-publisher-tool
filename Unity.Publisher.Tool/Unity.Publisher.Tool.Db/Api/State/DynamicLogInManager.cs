@@ -12,8 +12,8 @@ public class DynamicLogInManager<TExternalApi> : ILogInManager<TExternalApi>
         _logInManager = logInManagerProvider.Provide(typeof(TExternalApi));
     }
 
-    public async Task LogInAsync()
+    public Task LogInAsync(CancellationToken cancellationToken = default)
     {
-        await _logInManager.LogInAsync();
+        return _logInManager.LogInAsync(cancellationToken);
     }
 }

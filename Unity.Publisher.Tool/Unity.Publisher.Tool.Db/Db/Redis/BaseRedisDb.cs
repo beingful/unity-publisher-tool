@@ -42,15 +42,15 @@ public abstract class BaseRedisDb<TDatabase> where TDatabase : IDatabaseAsync
         return result;
     }
 
-    public async Task SetAsync(RedisData data)
+    public Task SetAsync(RedisData data)
     {
         string value = JsonSerializer.Serialize(data.Value, _serializerOptions);
 
-        await Database.StringSetAsync(data.Key, value, data.Lifetime, flags: CommandFlags.FireAndForget);
+        return Database.StringSetAsync(data.Key, value, data.Lifetime, flags: CommandFlags.FireAndForget);
     }
 
-    public async Task RemoveAsync(RedisKey key)
+    public Task RemoveAsync(RedisKey key)
     {
-        await Database.KeyDeleteAsync(key);
+        return Database.KeyDeleteAsync(key);
     }
 }

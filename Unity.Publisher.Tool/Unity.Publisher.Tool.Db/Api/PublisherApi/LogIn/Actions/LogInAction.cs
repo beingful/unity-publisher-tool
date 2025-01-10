@@ -18,10 +18,10 @@ public sealed class LogInAction
         _logInEndpoint = new GetLogInPageEndpoint();
     }
 
-    public async Task<LogInDataResult> GetPersonalizedDataAsync()
+    public async Task<LogInDataResult> GetPersonalizedDataAsync(CancellationToken cancellationToken = default)
     {
         using IHtmlHttpResponse loginHtmlPageResponse = await _httpClient
-            .GetAsync<IHtmlHttpResponse>(_logInEndpoint.Path());
+            .GetAsync<IHtmlHttpResponse>(_logInEndpoint.Path(), cancellationToken);
 
         string? authToken = FetchAuthenticityToken(loginHtmlPageResponse);
 

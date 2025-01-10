@@ -17,15 +17,17 @@ public abstract class ExternalApi
         Logger = logger;
     }
 
-    protected virtual async Task<TInternalModel> GetAsync<TExternalModel, TInternalModel>(string endpoint)
+    protected virtual async Task<TInternalModel> GetAsync<TExternalModel, TInternalModel>(
+        string endpoint, CancellationToken cancellationToken = default)
         where TExternalModel : IConvertibleTo<TInternalModel>
     {
-        TExternalModel response = await GetAsync<TExternalModel>(endpoint);
+        TExternalModel response = await GetAsync<TExternalModel>(endpoint, cancellationToken);
 
         return response.Convert();
     }
 
-    protected virtual async Task<TResponse> GetAsync<TResponse>(string endpoint)
+    protected virtual async Task<TResponse> GetAsync<TResponse>(
+        string endpoint, CancellationToken cancellationToken = default)
     {
         try
         {

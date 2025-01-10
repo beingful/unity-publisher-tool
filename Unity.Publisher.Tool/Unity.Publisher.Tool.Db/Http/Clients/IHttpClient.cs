@@ -7,14 +7,14 @@ public interface IHttpClient
 {
     Cookie? GetCookie(string name);
 
-    Task GetAsync(string? endpoint = null);
+    Task GetAsync(string? endpoint = null, CancellationToken cancellationToken = default);
 
-    Task<THttpResponse> GetAsync<THttpResponse>(string? endpoint = null)
+    Task<THttpResponse> GetAsync<THttpResponse>(string? endpoint = null, CancellationToken cancellationToken = default)
         where THttpResponse : IHttpResponse;
 
-    Task PostAsync(object? content = null, string? endpoint = null);
+    Task PostAsync(object? content = null, string? endpoint = null, CancellationToken cancellationToken = default);
 
-    Task<THttpResponse> PostUrlEncodedAsync<THttpResponse>(object content, string? endpoint = null)
+    Task<THttpResponse> PostUrlEncodedAsync<THttpResponse>(object content, string? endpoint = null, CancellationToken cancellationToken = default)
         where THttpResponse : IHttpResponse;
 }
 

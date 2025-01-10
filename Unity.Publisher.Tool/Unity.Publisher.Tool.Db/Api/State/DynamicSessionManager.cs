@@ -17,8 +17,8 @@ public class DynamicSessionManager<TExternalApi> : ISessionManager<TExternalApi>
         return _sessionManager.IsSessionAlive();
     }
 
-    public async Task SetUpSessionAsync()
+    public Task SetUpSessionAsync(CancellationToken cancellationToken = default)
     {
-        await _sessionManager.SetUpSessionAsync();
+        return _sessionManager.SetUpSessionAsync(cancellationToken);
     }
 }

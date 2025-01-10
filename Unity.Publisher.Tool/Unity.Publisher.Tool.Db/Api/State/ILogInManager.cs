@@ -2,7 +2,7 @@
 
 public interface ILogInManager
 {
-    public Task LogInAsync();
+    public Task LogInAsync(CancellationToken cancellationToken = default);
 }
 
 public interface ILogInManager<TExternalApi> : ILogInManager

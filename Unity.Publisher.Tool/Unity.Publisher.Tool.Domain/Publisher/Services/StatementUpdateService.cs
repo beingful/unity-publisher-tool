@@ -21,11 +21,8 @@ public class StatementUpdateService : IDataSource<PublisherStatement>
 
     public async Task<PublisherStatement> GetAsync()
     {
-        PublisherStatement storedStatement = _publisherStatementService
-            .GetStored();
-
-        PublisherStatement refreshedStatement = await _publisherStatementService
-            .RefreshAsync();
+        PublisherStatement storedStatement = _publisherStatementService.GetStored();
+        PublisherStatement refreshedStatement = await _publisherStatementService.RefreshAsync();
 
         PublisherStatement update;
 

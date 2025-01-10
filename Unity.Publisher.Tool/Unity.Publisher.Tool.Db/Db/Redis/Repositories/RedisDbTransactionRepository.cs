@@ -21,38 +21,38 @@ public class RedisDbTransactionRepository : IRedisTransaction
         return _baseRepository.CreateTransactionQueue(transaction);
     }
 
-    public async Task<TModel> GetAsync<TModel>(string id) where TModel : class
+    public Task<TModel> GetAsync<TModel>(string id) where TModel : class
     {
-        return await _baseRepository.GetAsync<TModel>(id);
+        return _baseRepository.GetAsync<TModel>(id);
     }
 
-    public async Task<TModel?> GetValueOrDefaultAsync<TModel>(string id) where TModel : class
+    public Task<TModel?> GetValueOrDefaultAsync<TModel>(string id) where TModel : class
     {
-        return await _baseRepository.GetValueOrDefaultAsync<TModel>(id);
+        return _baseRepository.GetValueOrDefaultAsync<TModel>(id);
     }
 
-    public async Task UpdateAsync<TModel>(Entity<TModel> value)
+    public Task UpdateAsync<TModel>(Entity<TModel> value)
     {
-        await _baseRepository.UpdateAsync(value);
+        return _baseRepository.UpdateAsync(value);
     }
 
-    public async Task UpsertAsync<TModel>(Entity<TModel> value)
+    public Task UpsertAsync<TModel>(Entity<TModel> value)
     {
-        await _baseRepository.UpsertAsync(value);
+        return _baseRepository.UpsertAsync(value);
     }
 
-    public async Task InsertAsync<TModel>(Entity<TModel> value)
+    public Task InsertAsync<TModel>(Entity<TModel> value)
     {
-        await _baseRepository.InsertAsync(value);
+        return _baseRepository.InsertAsync(value);
     }
 
-    public async Task RemoveAsync<TModel>(string id)
+    public Task RemoveAsync<TModel>(string id)
     {
-        await _baseRepository.RemoveAsync<TModel>(id);
+        return _baseRepository.RemoveAsync<TModel>(id);
     }
 
-    public async Task ExecuteAsync()
+    public Task ExecuteAsync()
     {
-        await _transaction.Transaction.ExecuteAsync();
+        return _transaction.Transaction.ExecuteAsync();
     }
 }

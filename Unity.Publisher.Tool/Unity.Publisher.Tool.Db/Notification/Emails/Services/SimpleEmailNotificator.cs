@@ -11,7 +11,7 @@ public class SimpleEmailNotificator : INotificator
         _emailNotificator = emailNotificator;
     }
 
-    public async Task SendAsync(Sender sender, Receiver receiver, Message message, CancellationToken cancellationToken)
+    public Task SendAsync(Sender sender, Receiver receiver, Message message, CancellationToken cancellationToken = default)
     {
         EmailNotification email = new()
         {
@@ -23,6 +23,6 @@ public class SimpleEmailNotificator : INotificator
             }
         };
 
-        await _emailNotificator.SendAsync(email, CancellationToken.None).ConfigureAwait(false);
+        return _emailNotificator.SendAsync(email, cancellationToken);
     }
 }

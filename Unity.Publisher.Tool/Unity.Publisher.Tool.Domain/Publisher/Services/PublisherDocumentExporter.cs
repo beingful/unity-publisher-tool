@@ -15,7 +15,7 @@ public class PublisherDocumentExporter<TData>
         _notificator = notificator;
     }
 
-    public async Task ExportAsync(TData content, Sender sender, Receiver receiver)
+    public Task ExportAsync(TData content, Sender sender, Receiver receiver, CancellationToken cancellationToken = default)
     {
         IDocument document = _documentBuilder.Build(content);
 
@@ -25,8 +25,6 @@ public class PublisherDocumentExporter<TData>
             Body = document.ToString()
         };
 
-        await _notificator
-            .SendAsync(sender, receiver, message, CancellationToken.None)
-            .ConfigureAwait(false);
+        return _notificator.SendAsync(sender, receiver, message, cancellationToken);
     }
 }

@@ -10,9 +10,9 @@ public class JsonHttpClient : TypedHttpClient
     {
     }
 
-    public override async Task<IHttpResponse> SendAsync(IFlurlRequest httpRequest)
+    public override async Task<IHttpResponse> SendAsync(IFlurlRequest httpRequest, CancellationToken cancellationToken)
     {
-        IFlurlResponse httpResponse = await SendFlurlAsync(httpRequest);
+        IFlurlResponse httpResponse = await SendFlurlAsync(httpRequest, cancellationToken);
 
         return new JsonHttpResponse(httpResponse);
     }

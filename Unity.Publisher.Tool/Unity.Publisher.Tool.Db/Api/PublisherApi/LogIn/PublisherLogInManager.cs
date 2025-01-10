@@ -24,15 +24,18 @@ public sealed class PublisherLogInManager : ILogInManager
         _callBackAction = new CallbackAction(httpClient);
     }
 
-    public async Task LogInAsync()
+    public async Task LogInAsync(CancellationToken cancellationToken = default)
     {
-        LogInDataResult logInDataResult = await _logInAction.GetPersonalizedDataAsync();
+        LogInDataResult logInDataResult = await _logInAction
+            .GetPersonalizedDataAsync(cancellationToken);
 
-        CallbackPageResult authCallbackPageResult = await _userCredentialsAction.SendAsync(logInDataResult);
+        CallbackPageResult authCallbackPageResult = await _userCredentialsAction
+            .SendAsync(logInDataResult, cancellationToken);
 
-        await _callBackAction.RedirectAsync(authCallbackPageResult);
+        await _callBackAction.RedirectAsync(authCallbackPageResult, cancellationToken);
 
-        CallbackPageResult bounceCallbackPageResult = await _publisherPortalAction.RequestPageAsync();
+        CallbackPageResult bounceCallbackPageResult = await _publisherPortalAction
+            .RequestPageAsync(cancellationToken);
 
         await _callBackAction.RedirectAsync(bounceCallbackPageResult);
     }

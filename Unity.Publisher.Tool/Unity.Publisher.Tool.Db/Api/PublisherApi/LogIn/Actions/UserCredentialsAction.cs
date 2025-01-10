@@ -19,16 +19,16 @@ public sealed class UserCredentialsAction
         _accountOptions = accountOptions.Value;
     }
 
-    public async Task<CallbackPageResult> SendAsync(LogInDataResult logInData)
+    public async Task<CallbackPageResult> SendAsync(LogInDataResult logInData, CancellationToken cancellationToken = default)
     {
-        IHtmlHttpResponse authCallbackResponse = await SendCredentialsAsync(logInData);
+        IHtmlHttpResponse authCallbackResponse = await SendCredentialsAsync(logInData, cancellationToken);
 
         return new CallbackPageResult(HtmlContent: authCallbackResponse.Content);
     }
 
-    private async Task<IHtmlHttpResponse> SendCredentialsAsync(LogInDataResult logInData)
+    private Task<IHtmlHttpResponse> SendCredentialsAsync(LogInDataResult logInData, CancellationToken cancellationToken)
     {
-        return await _httpClient.PostUrlEncodedAsync<IHtmlHttpResponse>(
+        return _httpClient.PostUrlEncodedAsync<IHtmlHttpResponse>(
             content: new Dictionary<string, string>
             {
                 { "utf8", "&#x2713;" },

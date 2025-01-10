@@ -15,25 +15,27 @@ public abstract class StatefulApi : ExternalApi
         _sessionManager = sessionManager;
     }
 
-    protected override async Task<TInternalModel> GetAsync<TExternalModel, TInternalModel>(string endpoint)
+    protected override async Task<TInternalModel> GetAsync<TExternalModel, TInternalModel>(
+        string endpoint, CancellationToken cancellationToken = default)
     {
         await CheckSessionAsync();
 
-        return await base.GetAsync<TExternalModel, TInternalModel>(endpoint);
+        return await base.GetAsync<TExternalModel, TInternalModel>(endpoint, cancellationToken);
     }
 
-    protected override async Task<TResponse> GetAsync<TResponse>(string endpoint)
+    protected override async Task<TResponse> GetAsync<TResponse>(
+        string endpoint, CancellationToken cancellationToken = default)
     {
         await CheckSessionAsync();
 
-        return await base.GetAsync<TResponse>(endpoint);
+        return await base.GetAsync<TResponse>(endpoint, cancellationToken);
     }
 
-    private async ValueTask CheckSessionAsync()
+    private async ValueTask CheckSessionAsync(CancellationToken cancellationToken = default)
     {
         if (_sessionManager.IsSessionAlive() == false)
         {
-            await _sessionManager.SetUpSessionAsync();
+            await _sessionManager.SetUpSessionAsync(cancellationToken);
         }
     }
 }

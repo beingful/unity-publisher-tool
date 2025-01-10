@@ -18,8 +18,8 @@ public class TransactionQueue<TTransaction, TRepository>
         return this;
     }
 
-    public async Task ExecuteAsync()
+    public Task ExecuteAsync()
     {
-        await _transaction.ExecuteAsync();
+        return _transaction.ExecuteAsync();
     }
 }

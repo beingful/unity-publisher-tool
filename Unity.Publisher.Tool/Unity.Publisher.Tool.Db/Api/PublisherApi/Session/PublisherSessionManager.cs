@@ -39,7 +39,7 @@ public class PublisherSessionManager : ISessionManager
         return string.IsNullOrWhiteSpace(cookie?.Value) == false && cookie?.Expired == false;
     }
 
-    public async Task SetUpSessionAsync()
+    public async Task SetUpSessionAsync(CancellationToken cancellationToken = default)
     {
         using (_logger.BeginScope("Start a log-in process."))
         {

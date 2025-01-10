@@ -30,35 +30,35 @@ public class BaseRedisDbRepository<TOperationType> : IRedisStorage
         return result!;
     }
 
-    public async Task<TModel?> GetValueOrDefaultAsync<TModel>(string id) where TModel : class
+    public Task<TModel?> GetValueOrDefaultAsync<TModel>(string id) where TModel : class
     {
         RedisKey key = GetKey<TModel>(id);
 
-        return await _redisDb.GetAsync<TModel>(key);
+        return _redisDb.GetAsync<TModel>(key);
     }
 
-    public async Task UpdateAsync<TModel>(Entity<TModel> entity)
+    public Task UpdateAsync<TModel>(Entity<TModel> entity)
     {
-        await InsertAsync(entity);
+        return InsertAsync(entity);
     }
 
-    public async Task UpsertAsync<TModel>(Entity<TModel> entity)
+    public Task UpsertAsync<TModel>(Entity<TModel> entity)
     {
-        await InsertAsync(entity);
+        return InsertAsync(entity);
     }
 
-    public async Task InsertAsync<TModel>(Entity<TModel> entity)
+    public Task InsertAsync<TModel>(Entity<TModel> entity)
     {
         RedisKey key = GetKey<TModel>(entity.Id);
 
-        await _redisDb.SetAsync(new RedisData(key, entity.Data!));
+        return _redisDb.SetAsync(new RedisData(key, entity.Data!));
     }
 
-    public async Task RemoveAsync<TModel>(string id)
+    public Task RemoveAsync<TModel>(string id)
     {
         RedisKey key = GetKey<TModel>(id);
 
-        await _redisDb.RemoveAsync(key);
+        return _redisDb.RemoveAsync(key);
     }
 
     private RedisKey GetKey<TModel>(string id)

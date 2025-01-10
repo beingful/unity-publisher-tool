@@ -37,24 +37,24 @@ public class DefaultHttpClient
         return request.WithCookies(_cookieJar);
     }
 
-    public async Task GetAsync(string? endpoint)
+    public Task GetAsync(string? endpoint, CancellationToken cancellationToken = default)
     {
         HttpRequestBuilder httpRequest = Request(endpoint).SetMethod(HttpMethod.Get);
 
-        await SendAsync(httpRequest);
+        return SendAsync(httpRequest, cancellationToken);
     }
 
-    public async Task PostAsync(object? content, string? endpoint)
+    public Task PostAsync(object? content, string? endpoint, CancellationToken cancellationToken = default)
     {
         HttpRequestBuilder httpRequest = Request(endpoint)
             .WithJsonContent(content)
             .SetMethod(HttpMethod.Post);
 
-        await SendAsync(httpRequest);
+        return SendAsync(httpRequest, cancellationToken);
     }
 
-    private async Task SendAsync(HttpRequestBuilder httpRequest)
+    private Task SendAsync(HttpRequestBuilder httpRequest, CancellationToken cancellationToken)
     {
-        await _flurlClient.SendAsync(httpRequest.Build(), HttpCompletionOption.ResponseHeadersRead);
+        return _flurlClient.SendAsync(httpRequest.Build(), HttpCompletionOption.ResponseHeadersRead, cancellationToken);
     }
 }

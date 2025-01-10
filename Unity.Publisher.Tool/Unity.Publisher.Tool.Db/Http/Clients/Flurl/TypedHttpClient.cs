@@ -12,10 +12,10 @@ public abstract class TypedHttpClient
         _flurlClient = flurlClient;
     }
 
-    public abstract Task<IHttpResponse> SendAsync(IFlurlRequest httpRequest);
+    public abstract Task<IHttpResponse> SendAsync(IFlurlRequest httpRequest, CancellationToken cancellationToken = default);
 
-    protected async Task<IFlurlResponse> SendFlurlAsync(IFlurlRequest httpRequest)
+    protected Task<IFlurlResponse> SendFlurlAsync(IFlurlRequest httpRequest, CancellationToken cancellationToken)
     {
-        return await _flurlClient.SendAsync(httpRequest);
+        return _flurlClient.SendAsync(httpRequest, cancellationToken: cancellationToken);
     }
 }

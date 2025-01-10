@@ -17,13 +17,13 @@ public abstract class PublisherReportingService<TData> : IPublisherReportingServ
         _documentExporter = documentExporter;
     }
 
-    public async Task ReportAsync(Sender sender, Receiver receiver)
+    public async Task ReportAsync(Sender sender, Receiver receiver, CancellationToken cancellationToken = default)
     {
         TData data = await _dataSource.GetAsync();
 
         if (CanReport(data))
         {
-            await _documentExporter.ExportAsync(data, sender, receiver);
+            await _documentExporter.ExportAsync(data, sender, receiver, cancellationToken);
         }
     }
 

@@ -17,25 +17,27 @@ public class DynamicHttpClient<TService> : IHttpClient<TService>
         return _httpClient.GetCookie(name);
     }
 
-    public Task GetAsync(string? endpoint)
+    public Task GetAsync(string? endpoint, CancellationToken cancellationToken = default)
     {
-        return _httpClient.GetAsync(endpoint);
+        return _httpClient.GetAsync(endpoint, cancellationToken);
     }
 
-    public Task<THttpResponse> GetAsync<THttpResponse>(string? endpoint)
+    public Task<THttpResponse> GetAsync<THttpResponse>(
+        string? endpoint, CancellationToken cancellationToken = default)
         where THttpResponse : IHttpResponse
     {
-        return _httpClient.GetAsync<THttpResponse>(endpoint);
+        return _httpClient.GetAsync<THttpResponse>(endpoint, cancellationToken);
     }
 
-    public Task PostAsync(object? content, string? endpoint)
+    public Task PostAsync(object? content, string? endpoint, CancellationToken cancellationToken = default)
     {
-        return _httpClient.PostAsync(endpoint);
+        return _httpClient.PostAsync(endpoint, cancellationToken: cancellationToken);
     }
 
-    public Task<THttpResponse> PostUrlEncodedAsync<THttpResponse>(object content, string? endpoint)
+    public Task<THttpResponse> PostUrlEncodedAsync<THttpResponse>(
+        object content, string? endpoint, CancellationToken cancellationToken = default)
         where THttpResponse : IHttpResponse
     {
-        return _httpClient.PostUrlEncodedAsync<THttpResponse>(content, endpoint);
+        return _httpClient.PostUrlEncodedAsync<THttpResponse>(content, endpoint, cancellationToken);
     }
 }

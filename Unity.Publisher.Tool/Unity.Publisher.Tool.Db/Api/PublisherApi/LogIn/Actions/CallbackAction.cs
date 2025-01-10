@@ -13,7 +13,7 @@ public class CallbackAction
         HttpClient = httpClient;
     }
 
-    public async Task RedirectAsync(CallbackPageResult callbackPage)
+    public Task RedirectAsync(CallbackPageResult callbackPage, CancellationToken cancellationToken = default)
     {
         string? callbackUrl = FetchCallBackUrl(callbackPage.HtmlContent);
 
@@ -22,7 +22,7 @@ public class CallbackAction
             throw new MissingMemberException($"A callback url is missing.");
         }
 
-        await HttpClient.GetAsync(callbackUrl);
+        return HttpClient.GetAsync(callbackUrl, cancellationToken);
     }
 
     private string? FetchCallBackUrl(IHtmlContent htmlContent)
