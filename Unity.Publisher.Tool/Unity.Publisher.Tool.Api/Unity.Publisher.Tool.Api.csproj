@@ -20,8 +20,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Unity.Publisher.Tool.App\Unity.Publisher.Tool.App.csproj" />
-    <ProjectReference Include="..\Unity.Publisher.Tool.Db\Unity.Publisher.Tool.Infrastructure.csproj" />
-    <ProjectReference Include="..\Unity.Publisher.Tool.Domain\Unity.Publisher.Tool.Domain.csproj" />
   </ItemGroup>
 
 </Project>
