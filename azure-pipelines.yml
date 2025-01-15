@@ -27,8 +27,6 @@ steps:
   inputs:
     containerRegistry: 'docker-hub'
     command: 'login'
-    addPipelineData: false
-    addBaseImageData: false
 
 - task: Docker@2
   displayName: Restore dependencies
@@ -39,8 +37,6 @@ steps:
     Dockerfile: '**/restore.Dockerfile'
     buildContext: $(DOCKER_BUILD_CONTEXT)
     tags: 'restore-$(BUILD_ID)'
-    addPipelineData: false
-    addBaseImageData: false
 
 - task: Docker@2
   displayName: Build the solution
@@ -51,8 +47,16 @@ steps:
     Dockerfile: '**/build.Dockerfile'
     buildContext: $(DOCKER_BUILD_CONTEXT)
     tags: 'build-$(BUILD_ID)'
-    addPipelineData: false
-    addBaseImageData: false
+
+- task: Docker@2
+  displayName: Run tests
+  inputs:
+    repository: $(REPOSITORY)
+    command: 'build'
+    arguments: '--force-rm -t $(IMAGE) --build-arg IMAGE --build-arg BUILD_ID'
+    Dockerfile: '**/tests.Dockerfile'
+    buildContext: $(DOCKER_BUILD_CONTEXT)
+    tags: 'tests-$(BUILD_ID)'
 
 - task: Docker@2
   displayName: Publish the API
@@ -63,8 +67,6 @@ steps:
     Dockerfile: '**/publish.Dockerfile'
     buildContext: $(DOCKER_BUILD_CONTEXT)
     tags: 'publish-$(BUILD_ID)'
-    addPipelineData: false
-    addBaseImageData: false
   condition: and(succeeded(), eq(variables.IS_PR_RUN, false))
 
 - task: Docker@2
@@ -78,8 +80,6 @@ steps:
     tags: |
       $(FINAL_IMAGE_TAG)
       build-$(BUILD_ID)
-    addPipelineData: false
-    addBaseImageData: false
   condition: and(succeeded(), eq(variables.IS_PR_RUN, false))
 
 - task: Docker@2
@@ -91,8 +91,6 @@ steps:
     tags: |
       $(FINAL_IMAGE_TAG)
       build-$(BUILD_ID)
-    addPipelineData: false
-    addBaseImageData: false
   condition: and(succeeded(), eq(variables.IS_PR_RUN, false))
 
 - task: Docker@2
@@ -100,5 +98,3 @@ steps:
   inputs:
     containerRegistry: 'docker-hub'
     command: 'logout'
-    addPipelineData: false
-    addBaseImageData: false
