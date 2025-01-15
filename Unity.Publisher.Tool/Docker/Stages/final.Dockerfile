@@ -3,7 +3,7 @@ ARG BUILD_ID
 
 FROM ${IMAGE}:publish-${BUILD_ID} AS publish
 
-FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine AS final
+FROM mcr.microsoft.com/dotnet/aspnet:8.0-alpine
 
 USER app
 

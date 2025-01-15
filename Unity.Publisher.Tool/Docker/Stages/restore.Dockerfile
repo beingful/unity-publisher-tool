@@ -1,4 +1,4 @@
-FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine as restore
+FROM mcr.microsoft.com/dotnet/sdk:8.0-alpine
 
 WORKDIR /src
 
