@@ -73,7 +73,7 @@ public partial class SaleComparerTests
         Sale emptySale = Sale.Empty("Product");
 
         return [
-            [ oneMoreCopySold, sale ],
+            [ sale, oneMoreCopySold ],
             [ oneCopyRefunded, sale ],
             [ oneCopyChargebacked, sale ],
             [ emptySale, sale ]
