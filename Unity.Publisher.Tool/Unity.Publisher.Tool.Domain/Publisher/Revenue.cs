@@ -1,0 +1,16 @@
+﻿namespace Unity.Publisher.Tool.Domain.Publisher;
+
+public class Revenue
+{
+    public readonly decimal Total;
+
+    public Revenue(decimal total)
+    {
+        Total = total;
+    }
+
+    public static Revenue Zero()
+    {
+        return new Revenue(0);
+    }
+}

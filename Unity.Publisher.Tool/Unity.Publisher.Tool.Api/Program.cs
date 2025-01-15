@@ -1,23 +1,22 @@
-using Unity.Publisher.Tool.Dependencies;
-using Unity.Publisher.Tool.Endpoints;
+using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Unity.Publisher.Tool;
 
-var builder = WebApplication.CreateBuilder(args);
+WebApplicationBuilder builder = WebApplication.CreateBuilder();
 
-builder.Services
-    .AddEndpointsApiExplorer()
-    .AddSwaggerGen()
-    .AddNotificationServices();
+Startup startup = new(builder.Configuration);
 
-var app = builder.Build();
+startup.ConfigureServices(builder.Services);
 
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+builder.Host
+    .UseServiceProviderFactory(new AutofacServiceProviderFactory())
+    .ConfigureContainer<ContainerBuilder>(containerBuilder =>
+    {
+        startup.ConfigureContainer(containerBuilder);
+    });
 
-app.UseHttpsRedirection();
+WebApplication webApp = builder.Build();
 
-app.AddNotificationEndpoints();
+startup.Configure(webApp, webApp.Environment);
 
-app.Run();
+webApp.Run();

@@ -1,0 +1,48 @@
+﻿using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders.Formatting;
+
+namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
+
+public class PublisherReportDocumentBuilder : IDocumentBuilder<PublisherReport>
+{
+    private readonly IParagraphBuilder<PublisherInfo> _publisherInfoContentBuilder;
+    private readonly IParagraphBuilder<PublisherStatement> _publisherStatementContentBuilder;
+
+    public PublisherReportDocumentBuilder(
+        IParagraphBuilder<PublisherInfo> publisherInfoContentBuilder,
+        IParagraphBuilder<PublisherStatement> publisherStatementContentBuilder)
+    {
+        _publisherInfoContentBuilder = publisherInfoContentBuilder;
+        _publisherStatementContentBuilder = publisherStatementContentBuilder;
+    }
+
+    public IDocument Build(PublisherReport report)
+    {
+        Title title = new(name: "Report", description: "Report");
+
+        Content content = new(
+            text: Content(report),
+            formatting: new DocumentFormatting(
+                baseFormatting: new ParagraphFormatting()));
+
+        Document document = Document.Create(title, content);
+
+        InnerDocuments(report).ForEach(inner => document.AddInner(inner));
+
+        return document;
+    }
+
+    private string Content(PublisherReport report)
+    {
+        return $"REPORT FOR {report.Month.Name}:\n\n" +
+            $"Total revenue: ${report.Revenue.Total}.\n";
+    }
+
+    private List<IDocument> InnerDocuments(PublisherReport report)
+    {
+        return new List<IDocument>()
+        {
+            _publisherInfoContentBuilder.Build(report.Publisher),
+            _publisherStatementContentBuilder.Build(report.Statement)
+        };
+    }
+}
