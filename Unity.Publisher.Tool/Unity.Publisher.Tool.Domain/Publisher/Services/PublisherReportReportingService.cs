@@ -1,4 +1,5 @@
-﻿using Unity.Publisher.Tool.Domain.General;
+﻿using Microsoft.Extensions.Logging;
+using Unity.Publisher.Tool.Domain.General;
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Services;
 
@@ -6,8 +7,9 @@ public class PublisherReportReportingService : PublisherReportingService<Publish
 {
     public PublisherReportReportingService(
         IDataSource<PublisherReport> monthlyReportSource,
-        PublisherDocumentExporter<PublisherReport> monthlyReportExporter)
-        : base(monthlyReportSource, monthlyReportExporter)
+        PublisherDocumentExporter<PublisherReport> monthlyReportExporter,
+        ILogger<PublisherReportReportingService> logger)
+        : base(monthlyReportSource, monthlyReportExporter, logger)
     {
     }
 

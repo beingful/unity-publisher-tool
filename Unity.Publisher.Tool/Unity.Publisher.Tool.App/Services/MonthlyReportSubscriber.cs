@@ -14,6 +14,6 @@ public class MonthlyReportSubscriber : PublisherEventNotificationSubscriber
 
     public override void Subscribe(NotificationDetails notificationDetails)
     {
-        Schedule<MonthlyReportPerformer>(TriggerTime.FromTimeInterval(1), notificationDetails);
+        Schedule<MonthlyReportPerformer>(TriggerTime.Monthly(), notificationDetails);
     }
 }

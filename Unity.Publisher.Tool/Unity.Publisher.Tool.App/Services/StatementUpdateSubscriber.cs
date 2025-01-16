@@ -14,6 +14,6 @@ public class StatementUpdateSubscriber : PublisherEventNotificationSubscriber
 
     public override void Subscribe(NotificationDetails notificationDetails)
     {
-        Schedule<StatementUpdatePerformer>(TriggerTime.FromTimeInterval(minutes: 1), notificationDetails);
+        Schedule<StatementUpdatePerformer>(TriggerTime.FromTimeInterval(minutes: 10), notificationDetails);
     }
 }
