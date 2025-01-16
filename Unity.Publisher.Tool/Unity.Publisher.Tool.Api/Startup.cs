@@ -40,6 +40,7 @@ public class Startup
                         new RedisStorageOptions
                         {
                             UseTransactions = false,
+                            DeletedListSize = 20,
                             InvisibilityTimeout = TimeSpan.FromSeconds(30)
                         })
                     .UseFilter(new AutomaticRetryAttribute
@@ -72,9 +73,11 @@ public class Startup
 
         app.UseRouting();
 
-        app.UseEndpoints(x =>
+        app.UseEndpoints(endpoints =>
         {
-            x.AddNotificationEndpoints();
+            endpoints
+                .AddNotificationEndpoints()
+                .AddHomeEndpoints();
         });
 
         GlobalConfiguration.Configuration
