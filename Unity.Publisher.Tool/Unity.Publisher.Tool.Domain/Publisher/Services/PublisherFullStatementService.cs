@@ -1,41 +1,30 @@
 ﻿using Unity.Publisher.Tool.Domain.General;
-using Unity.Publisher.Tool.Domain.Storage;
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Services;
 
-public class PublisherStatementService
+public class PublisherFullStatementService : IPublisherRefreshedStatementService
 {
     private readonly IDataSource<Assets> _assetsSource;
     private readonly IDataSource<Sales> _salesSource;
     private readonly IDataSource<Reviews> _reviewsSource;
     private readonly IDataSource<Downloads> _downloadsSource;
-    private readonly IDataStorage _dataStorage;
     private readonly DateTime _timestamp;
 
-    public PublisherStatementService(
+    public PublisherFullStatementService(
         IDataSource<Assets> assetsSource,
         IDataSource<Sales> salesSource,
         IDataSource<Reviews> reviewsSource,
         IDataSource<Downloads> downloadsSource,
-        IDataStorage storage,
         DateTime timestamp)
     {
         _assetsSource = assetsSource;
         _salesSource = salesSource;
         _reviewsSource = reviewsSource;
         _downloadsSource = downloadsSource;
-        _dataStorage = storage;
         _timestamp = timestamp;
     }
 
-    public PublisherStatement GetStored()
-    {
-        PublisherStatement? storedStatementEntity = _dataStorage.Fetch<PublisherStatement>();
-
-        return storedStatementEntity ?? PublisherStatement.Empty();
-    }
-
-    public async Task<PublisherStatement> RefreshAsync()
+    public async Task<PublisherStatement> GetAsync()
     {
         Task<Assets> getAssetsTask = _assetsSource.GetAsync();
         Task<Sales> getSalesTask = _salesSource.GetAsync();

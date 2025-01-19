@@ -11,6 +11,11 @@ public class SaleComparer : IDataComparer<Sale>
 
     public Sale Difference(Sale left, Sale right)
     {
+        return left.IsEmpty ? left : CalculateDifference(left, right);
+    }
+
+    private Sale CalculateDifference(Sale left, Sale right)
+    {
         return new Sale(
             productTag: left.ProductTag,
             copiesSold: Math.Max(left.CopiesSold - right.CopiesSold, 0),

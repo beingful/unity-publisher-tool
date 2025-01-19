@@ -29,19 +29,16 @@ public class AssetStatementComparer : IDataComparer<AssetStatement>
     {
         return new AssetStatement(
             asset: left.Asset,
-            sales: GetDifferenceOrDefault(left.Sales, right.Sales, _salesComparer)
-                ?? Sales.Empty(),
-            reviews: GetDifferenceOrDefault(left.Reviews, right.Reviews, _reviewsComparer)
-                ?? Reviews.Empty(),
-            downloads: GetDifferenceOrDefault(left.Downloads, right.Downloads, _downloadsComparer)
-                ?? Download.Empty(left.Asset.Name));
+            sales: GetDifferenceOrDefault(left.Sales, right.Sales, _salesComparer, defaultValue: Sales.Empty()),
+            reviews: GetDifferenceOrDefault(left.Reviews, right.Reviews, _reviewsComparer, defaultValue: Reviews.Empty()),
+            downloads: GetDifferenceOrDefault(left.Downloads, right.Downloads, _downloadsComparer, defaultValue: Download.Empty(left.Asset.Name)));
     }
 
-    private TData? GetDifferenceOrDefault<TData>(TData left, TData right, IDataComparer<TData> comparer)
+    private TData GetDifferenceOrDefault<TData>(TData left, TData right, IDataComparer<TData> comparer, TData defaultValue)
         where TData : class
     {
         return comparer.Different(left, right)
             ? comparer.Difference(left, right)
-            : null;
+            : defaultValue;
     }
 }
