@@ -176,7 +176,13 @@ public static class DomainServiceInjection
         PublisherEvent key = PublisherEvent.StatementUpdate;
 
         container
-            .RegisterType<PublisherStatementService>()
+            .RegisterType<PublisherDownloadlessStatementService>()
+            .As<IPublisherRefreshedStatementService>()
+            .InstancePerBackgroundJob();
+
+        container
+            .RegisterType<PublisherStoredStatementService>()
+            .As<IPublisherStoredStatementService>()
             .InstancePerBackgroundJob();
 
         container
@@ -210,6 +216,11 @@ public static class DomainServiceInjection
             })
             .Keyed<IPublisherEventIdProvider>(key)
             .InstancePerLifetimeScope();
+
+        container
+            .RegisterType<PublisherFullStatementService>()
+            .As<IPublisherStatementService>()
+            .InstancePerBackgroundJob();
 
         container
             .RegisterType<MonthlyReportService>()

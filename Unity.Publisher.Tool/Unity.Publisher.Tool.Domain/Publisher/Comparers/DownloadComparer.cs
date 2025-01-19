@@ -11,9 +11,14 @@ public class DownloadComparer : IDataComparer<Download>
 
     public Download Difference(Download left, Download right)
     {
+        return left.IsEmpty ? left : CalculateDifference(left, right);
+    }
+
+    private Download CalculateDifference(Download left, Download right)
+    {
         return new Download(
             product: left.Product,
-            downloads: left.Downloads - right.Downloads,
-            downloaders: left.Downloaders - right.Downloaders);
+            downloads: Math.Max(left.Downloads - right.Downloads, 0),
+            downloaders: Math.Max(left.Downloaders - right.Downloaders, 0));
     }
 }
