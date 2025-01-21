@@ -42,7 +42,7 @@ public class ParagraphFormatting : IFormatting
 
         foreach (IDocument document in innerDocuments)
         {
-            paragraphs.Add(document.ToString());
+            paragraphs.Add(document.Text());
         }
 
         return Separation?.Apply(paragraphs

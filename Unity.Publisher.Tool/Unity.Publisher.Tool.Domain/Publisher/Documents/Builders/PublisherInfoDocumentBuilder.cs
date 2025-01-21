@@ -2,7 +2,7 @@
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
-public class PublisherInfoDocumentBuilder : IParagraphBuilder<PublisherInfo>
+public class PublisherInfoDocumentBuilder : IDocumentBuilder<PublisherInfo>
 {
     public IDocument Build(PublisherInfo publisher)
     {
@@ -10,7 +10,7 @@ public class PublisherInfoDocumentBuilder : IParagraphBuilder<PublisherInfo>
             text: Content(publisher),
             formatting: new ParagraphFormatting());
 
-        return Document.CreateParagraph(content);
+        return Document.Create(content);
     }
 
     private string Content(PublisherInfo publisher)

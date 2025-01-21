@@ -21,8 +21,8 @@ public class PublisherStatement
         return new PublisherStatement(Array.Empty<AssetStatement>(), DateTime.MinValue);
     }
 
-    public static PublisherStatement Create(
-        Assets assets, Sales sales, Reviews reviews, Downloads downloads, DateTime creationTime)
+    public static PublisherStatement Create(Assets assets, Sales sales,
+        Reviews reviews, Downloads downloads, DateTime creationTime)
     {
         Dictionary<string, Sales> salesByAsset = sales.Collection
             .GroupBy(x => x.ProductTag.Product)
@@ -35,22 +35,37 @@ public class PublisherStatement
         Dictionary<string, Download> downloadsByAsset = downloads.Collection
             .ToDictionary(x => x.Product);
 
+        AssetStatement[] assetStatements = CreateAssetStatements(
+            assets, salesByAsset, reviewsByAsset, downloadsByAsset);
+
+        return new PublisherStatement(assetStatements, creationTime);
+    }
+
+    private static AssetStatement[] CreateAssetStatements(
+        Assets assets,
+        Dictionary<string, Sales> sales,
+        Dictionary<string, Reviews> reviews,
+        Dictionary<string, Download> downloads)
+    {
         List<AssetStatement> assetEvents = [];
 
         foreach (Asset asset in assets.Collection.OrderBy(x => x.Id))
         {
-            assetEvents.Add(new AssetStatement(
+            bool assetRelatedInfoIsProvided =
+                sales.TryGetValue(asset.Name, out Sales? assetSales)
+                | reviews.TryGetValue(asset.Name, out Reviews? assetReviews)
+                | downloads.TryGetValue(asset.Name, out Download? assetDownloads);
+
+            if (assetRelatedInfoIsProvided)
+            {
+                assetEvents.Add(new AssetStatement(
                 asset: asset,
-                sales: salesByAsset.TryGetValue(asset.Name, out Sales? salesResult)
-                    ? salesResult
-                    : Sales.Empty(),
-                reviews: reviewsByAsset.TryGetValue(asset.Name, out Reviews? reviewsResult)
-                    ? reviewsResult
-                    : Reviews.Empty(),
-                downloads: downloadsByAsset.GetValueOrDefault(asset.Name)
-                            ?? Download.Empty(asset.Name)));
+                sales: assetSales ?? Sales.Empty(),
+                reviews: assetReviews ?? Reviews.Empty(),
+                downloads: assetDownloads ?? Download.Empty(asset.Name)));
+            }
         }
 
-        return new PublisherStatement([.. assetEvents], creationTime);
+        return [.. assetEvents];
     }
 }

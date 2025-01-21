@@ -2,16 +2,18 @@
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
-public class DownloadDocumentBuilder : IParagraphBuilder<Download>
+public class DownloadDocumentBuilder : IDocumentBuilder<Download>
 {
     public IDocument Build(Download dowload)
     {
+        Metadata metadata = Metadata.WithDescription("DOWNLOADS");
+
         Content content = new(
             text: Content(dowload),
             formatting: new ParagraphFormatting());
 
         return Document
-            .CreateParagraph(content)
+            .Create(content, metadata)
             .AddInner(InnerDocument(dowload));
     }
 
@@ -22,7 +24,7 @@ public class DownloadDocumentBuilder : IParagraphBuilder<Download>
 
     private IDocument InnerDocument(Download download)
     {
-        return Document.CreateParagraph(
+        return Document.Create(
             content: new Content(
                 text: $"Downloads: {download.Downloads}.\n" +
                       $"Downloaders: {download.Downloaders}.",

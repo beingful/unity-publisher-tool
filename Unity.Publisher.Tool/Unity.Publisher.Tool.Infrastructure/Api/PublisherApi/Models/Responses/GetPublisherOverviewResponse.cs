@@ -11,8 +11,6 @@ internal sealed class GetPublisherOverviewResponse : IConvertibleTo<Rating>
 
     public Rating Convert()
     {
-        return new Rating(
-            Overview.PublisherRating.Count,
-            Overview.PublisherRating.Average);
+        return new Rating(Overview.PublisherRating.Average);
     }
 }

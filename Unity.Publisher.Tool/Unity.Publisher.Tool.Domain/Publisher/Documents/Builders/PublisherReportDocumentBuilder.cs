@@ -4,12 +4,12 @@ namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
 public class PublisherReportDocumentBuilder : IDocumentBuilder<PublisherReport>
 {
-    private readonly IParagraphBuilder<PublisherInfo> _publisherInfoContentBuilder;
-    private readonly IParagraphBuilder<PublisherStatement> _publisherStatementContentBuilder;
+    private readonly IDocumentBuilder<PublisherInfo> _publisherInfoContentBuilder;
+    private readonly IDocumentBuilder<PublisherStatement> _publisherStatementContentBuilder;
 
     public PublisherReportDocumentBuilder(
-        IParagraphBuilder<PublisherInfo> publisherInfoContentBuilder,
-        IParagraphBuilder<PublisherStatement> publisherStatementContentBuilder)
+        IDocumentBuilder<PublisherInfo> publisherInfoContentBuilder,
+        IDocumentBuilder<PublisherStatement> publisherStatementContentBuilder)
     {
         _publisherInfoContentBuilder = publisherInfoContentBuilder;
         _publisherStatementContentBuilder = publisherStatementContentBuilder;
@@ -17,14 +17,14 @@ public class PublisherReportDocumentBuilder : IDocumentBuilder<PublisherReport>
 
     public IDocument Build(PublisherReport report)
     {
-        Title title = new(name: "Report", description: "Report");
+        Metadata metadata = Metadata.Create(title: "Report", description: "Report");
 
         Content content = new(
             text: Content(report),
             formatting: new DocumentFormatting(
                 baseFormatting: new ParagraphFormatting()));
 
-        Document document = Document.Create(title, content);
+        SelfDescriptiveDocument document = new(content, metadata);
 
         InnerDocuments(report).ForEach(inner => document.AddInner(inner));
 

@@ -21,8 +21,8 @@ public class PublisherDocumentExporter<TData>
 
         Message message = new()
         {
-            Subject = $"Unity Asset Store: {document.Title.Description}",
-            Body = document.ToString()
+            Subject = document.Summary(),
+            Body = document.Text()
         };
 
         return _notificator.SendAsync(sender, receiver, message, cancellationToken);
