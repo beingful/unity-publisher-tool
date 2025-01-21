@@ -2,17 +2,19 @@
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
-public class ReviewsDocumentBuilder : IParagraphBuilder<Reviews>
+public class ReviewsDocumentBuilder : IDocumentBuilder<Reviews>
 {
-    private readonly IParagraphBuilder<Review> _contentBuilder;
+    private readonly IDocumentBuilder<Review> _contentBuilder;
 
-    public ReviewsDocumentBuilder(IParagraphBuilder<Review> contentBuilder)
+    public ReviewsDocumentBuilder(IDocumentBuilder<Review> contentBuilder)
     {
         _contentBuilder = contentBuilder;
     }
 
     public IDocument Build(Reviews reviews)
     {
+        Metadata metadata = Metadata.WithDescription("REVIEWS");
+
         Content content = new(
             text: Content(),
             formatting: new ParagraphFormatting(new FormattingOptions
@@ -20,7 +22,7 @@ public class ReviewsDocumentBuilder : IParagraphBuilder<Reviews>
                 Separator = '*'
             }));
 
-        Document document = Document.CreateParagraph(content);
+        Document document = Document.Create(content, metadata);
 
         InnerDocuments(reviews).ForEach(inner => document.AddInner(inner));
 

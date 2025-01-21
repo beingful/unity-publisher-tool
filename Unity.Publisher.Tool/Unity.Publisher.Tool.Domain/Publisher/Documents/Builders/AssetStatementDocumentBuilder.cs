@@ -2,16 +2,16 @@
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
-public class AssetStatementDocumentBuilder : IParagraphBuilder<AssetStatement>
+public class AssetStatementDocumentBuilder : IDocumentBuilder<AssetStatement>
 {
-    private readonly IParagraphBuilder<Sales> _salesContentBuilder;
-    private readonly IParagraphBuilder<Reviews> _reviewsContentBuilder;
-    private readonly IParagraphBuilder<Download> _downloadsContentBuilder;
+    private readonly IDocumentBuilder<Sales> _salesContentBuilder;
+    private readonly IDocumentBuilder<Reviews> _reviewsContentBuilder;
+    private readonly IDocumentBuilder<Download> _downloadsContentBuilder;
 
     public AssetStatementDocumentBuilder(
-        IParagraphBuilder<Sales> salesContentBuilder,
-        IParagraphBuilder<Reviews> reviewsContentBuilder,
-        IParagraphBuilder<Download> downloadsContentBuilder)
+        IDocumentBuilder<Sales> salesContentBuilder,
+        IDocumentBuilder<Reviews> reviewsContentBuilder,
+        IDocumentBuilder<Download> downloadsContentBuilder)
     {
         _salesContentBuilder = salesContentBuilder;
         _reviewsContentBuilder = reviewsContentBuilder;
@@ -20,23 +20,25 @@ public class AssetStatementDocumentBuilder : IParagraphBuilder<AssetStatement>
 
     public IDocument Build(AssetStatement statement)
     {
+        Metadata metadata = Metadata.WithDescription(statement.Asset.Name);
+
         Content content = new(
-            text: Content(statement),
+            text: GetContent(statement),
             formatting: new ParagraphFormatting());
 
-        Document document = Document.CreateParagraph(content);
+        Document document = Document.Create(content, metadata);
 
-        InnerDocuments(statement).ForEach(inner => document.AddInner(inner));
+        GetInnerDocuments(statement).ForEach(inner => document.AddInner(inner));
 
         return document;
     }
 
-    private string Content(AssetStatement statement)
+    private string GetContent(AssetStatement statement)
     {
         return $"{statement.Asset.Name.ToUpper()}\n";
     }
 
-    private List<IDocument> InnerDocuments(AssetStatement statement)
+    private List<IDocument> GetInnerDocuments(AssetStatement statement)
     {
         List<IDocument> documents = new();
 

@@ -2,16 +2,16 @@
 
 public class Document : IDocument
 {
-    private readonly Title _title;
     private readonly Content _content;
+    private readonly Metadata _metadata;
 
-    private Document(Title title, Content content)
+    protected Document(Content content, Metadata metadata)
     {
-        _title = title;
         _content = content;
+        _metadata = metadata;
     }
 
-    public Title Title => _title;
+    public Metadata Metadata => _metadata;
 
     public int Depth
     {
@@ -19,16 +19,18 @@ public class Document : IDocument
         set => _content.Depth = value;
     }
 
-    public static Document Create(Title title, Content content)
+    public static Document Create(Content content, Metadata metadata)
     {
-        Document document = new(title, content);
+        Document document = new(content, metadata);
 
         return document;
     }
 
-    public static Document CreateParagraph(Content content)
+    public static Document Create(Content content)
     {
-        return new Document(Title.Empty(), content);
+        Document document = new(content, Metadata.Empty());
+
+        return document;
     }
 
     public IDocument AddInner(IDocument document)
@@ -38,8 +40,36 @@ public class Document : IDocument
         return this;
     }
 
-    public override string ToString()
+    public virtual string Summary()
     {
-        return _content.ToString();
+        string summary = _metadata.Description;
+
+        List<string> innerSummaries = [];
+
+        foreach (IDocument document in _content.InnerDocuments)
+        {
+            string innerDocumentSummary = document.Summary();
+
+            if (string.IsNullOrWhiteSpace(innerDocumentSummary) == false)
+            {
+                innerSummaries.Add(innerDocumentSummary);
+            }
+        }
+
+        if (innerSummaries.Count > 0)
+        {
+            string innerSummary = string.Join(", ", innerSummaries);
+
+            summary += string.IsNullOrWhiteSpace(summary)
+                ? innerSummary
+                : $": {innerSummary}";
+        }
+
+        return summary;
+    }
+
+    public string Text()
+    {
+        return _content.Formatted();
     }
 }

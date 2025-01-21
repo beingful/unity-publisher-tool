@@ -1,7 +1,6 @@
 ﻿using MimeKit;
 using MimeKit.Text;
 using MailKit.Net.Smtp;
-using Microsoft.Extensions.Logging;
 using Unity.Publisher.Tool.Domain.Notifications;
 
 namespace Unity.Publisher.Tool.Infrastructure.Notification.Emails.Services;
@@ -9,12 +8,10 @@ namespace Unity.Publisher.Tool.Infrastructure.Notification.Emails.Services;
 public class EmailNotificator : INotificator<EmailNotification>
 {
     private readonly SmtpServersCollection _smtpServers;
-    private readonly ILogger _logger;
 
-    public EmailNotificator(SmtpServersCollection smtpServers, ILogger<EmailNotificator> logger)
+    public EmailNotificator(SmtpServersCollection smtpServers)
     {
         _smtpServers = smtpServers;
-        _logger = logger;
     }
 
     public Task SendAsync(EmailNotification notification, CancellationToken cancellationToken = default)

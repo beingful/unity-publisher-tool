@@ -2,25 +2,24 @@
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
-public class SalesDocumentBuilder : IParagraphBuilder<Sales>
+public class SalesDocumentBuilder : IDocumentBuilder<Sales>
 {
-    private readonly IParagraphBuilder<Sale> _contentBuilder;
+    private readonly IDocumentBuilder<Sale> _contentBuilder;
 
-    public SalesDocumentBuilder(IParagraphBuilder<Sale> contentBuilder)
+    public SalesDocumentBuilder(IDocumentBuilder<Sale> contentBuilder)
     {
         _contentBuilder = contentBuilder;
     }
 
     public IDocument Build(Sales sales)
     {
+        Metadata metadata = Metadata.WithDescription("SALES");
+
         Content content = new(
             text: Content(sales),
-            formatting: new ParagraphFormatting(new FormattingOptions
-            {
-                Separator = '*'
-            }));
+            formatting: new ParagraphFormatting());
 
-        Document document = Document.CreateParagraph(content);
+        Document document = Document.Create(content, metadata);
 
         InnerDocuments(sales).ForEach(inner => document.AddInner(inner));
 

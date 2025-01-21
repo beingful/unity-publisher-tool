@@ -83,42 +83,42 @@ public static class DomainServiceInjection
 
         container
             .RegisterType<PublisherStatementDocumentBuilder>()
-            .As<IParagraphBuilder<PublisherStatement>>()
+            .As<IDocumentBuilder<PublisherStatement>>()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<PublisherInfoDocumentBuilder>()
-            .As<IParagraphBuilder<PublisherInfo>>()
+            .As<IDocumentBuilder<PublisherInfo>>()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<AssetStatementDocumentBuilder>()
-            .As<IParagraphBuilder<AssetStatement>>()
+            .As<IDocumentBuilder<AssetStatement>>()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<SalesDocumentBuilder>()
-            .As<IParagraphBuilder<Sales>>()
+            .As<IDocumentBuilder<Sales>>()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<SaleDocumentBuilder>()
-            .As<IParagraphBuilder<Sale>>()
+            .As<IDocumentBuilder<Sale>>()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<ReviewsDocumentBuilder>()
-            .As<IParagraphBuilder<Reviews>>()
+            .As<IDocumentBuilder<Reviews>>()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<ReviewDocumentBuilder>()
-            .As<IParagraphBuilder<Review>>()
+            .As<IDocumentBuilder<Review>>()
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<DownloadDocumentBuilder>()
-            .As<IParagraphBuilder<Download>>()
+            .As<IDocumentBuilder<Download>>()
             .InstancePerBackgroundJob();
 
         container

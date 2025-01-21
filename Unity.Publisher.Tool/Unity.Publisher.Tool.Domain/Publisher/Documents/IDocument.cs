@@ -2,11 +2,13 @@
 
 public interface IDocument
 {
-    Title Title { get; }
+    Metadata Metadata { get; }
 
     public int Depth { get; internal set; }
 
     IDocument AddInner(IDocument content);
 
-    string ToString();
+    string Summary();
+
+    string Text();
 }

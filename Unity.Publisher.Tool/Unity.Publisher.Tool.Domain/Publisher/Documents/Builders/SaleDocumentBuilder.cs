@@ -2,7 +2,7 @@
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
-public class SaleDocumentBuilder : IParagraphBuilder<Sale>
+public class SaleDocumentBuilder : IDocumentBuilder<Sale>
 {
     public IDocument Build(Sale sale)
     {
@@ -10,7 +10,7 @@ public class SaleDocumentBuilder : IParagraphBuilder<Sale>
             text: Content(sale),
             formatting: new ParagraphFormatting());
 
-        return Document.CreateParagraph(content);
+        return Document.Create(content);
     }
 
     private string Content(Sale sale)

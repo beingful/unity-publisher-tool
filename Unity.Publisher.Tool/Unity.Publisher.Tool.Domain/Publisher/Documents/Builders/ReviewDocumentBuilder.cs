@@ -2,7 +2,7 @@
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
-public class ReviewDocumentBuilder : IParagraphBuilder<Review>
+public class ReviewDocumentBuilder : IDocumentBuilder<Review>
 {
     public IDocument Build(Review review)
     {
@@ -10,7 +10,7 @@ public class ReviewDocumentBuilder : IParagraphBuilder<Review>
             text: Content(review),
             formatting: new ParagraphFormatting());
 
-        return Document.CreateParagraph(content);
+        return Document.Create(content);
     }
 
     public string Content(Review review)

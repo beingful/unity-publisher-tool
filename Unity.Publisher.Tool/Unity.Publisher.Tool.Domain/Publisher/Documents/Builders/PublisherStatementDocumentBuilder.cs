@@ -2,42 +2,26 @@
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
-public class PublisherStatementDocumentBuilder
-    : IDocumentBuilder<PublisherStatement>, IParagraphBuilder<PublisherStatement>
+public class PublisherStatementDocumentBuilder: IDocumentBuilder<PublisherStatement>
 {
-    private readonly IParagraphBuilder<AssetStatement> _contentBuilder;
+    private readonly IDocumentBuilder<AssetStatement> _contentBuilder;
 
-    public PublisherStatementDocumentBuilder(IParagraphBuilder<AssetStatement> contentBuilder)
+    public PublisherStatementDocumentBuilder(IDocumentBuilder<AssetStatement> contentBuilder)
     {
         _contentBuilder = contentBuilder;
     }
 
-    IDocument IDocumentBuilder<PublisherStatement>.Build(PublisherStatement statement)
+    public IDocument Build(PublisherStatement statement)
     {
-        Title title = new(name: "StatementUpdate", description: "Updates");
+        Metadata metadata = Metadata.WithTitle("StatementUpdate");
 
         Content content = new(
             text: Content(),
             formatting: new DocumentFormatting(
                 baseFormatting: new ParagraphFormatting(
-                    options: new FormattingOptions { Separator = '-' })));
+                    options: new FormattingOptions { Separator = '*' })));
 
-        Document document = Document.Create(title, content);
-
-        InnerDocuments(statement.AssetsStatements)
-            .ForEach(inner => document.AddInner(inner));
-
-        return document;
-    }
-
-    IDocument IParagraphBuilder<PublisherStatement>.Build(PublisherStatement statement)
-    {
-        Content content = new(
-            text: Content(),
-            formatting: new ParagraphFormatting(
-                options: new FormattingOptions { Separator = '-' }));
-
-        Document document = Document.CreateParagraph(content);
+        Document document = Document.Create(content, metadata);
 
         InnerDocuments(statement.AssetsStatements)
             .ForEach(inner => document.AddInner(inner));

@@ -36,7 +36,7 @@ public class Content
         _innerDocuments.Add(document);
     }
 
-    public override string ToString()
+    public string Formatted()
     {
         return _formatting.Apply(this);
     }
