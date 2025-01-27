@@ -24,6 +24,8 @@ public class AdminAuthorizationRule : IAuthorizationRequirement
 
     private bool IsAdmin(ClaimsPrincipal user)
     {
-        return user.FindFirstValue(ClaimTypes.Email) == _admin.Email;
+        string usersEmail = user.FindFirstValue(ClaimTypes.Email)!;
+
+        return _admin.Emails.Contains(usersEmail);
     }
 }

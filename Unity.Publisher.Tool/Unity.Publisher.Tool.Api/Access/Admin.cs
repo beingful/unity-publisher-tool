@@ -2,5 +2,12 @@
 
 public class Admin
 {
-    public required string Email { get; init; }
+    private const char _emailsSeparator = ';';
+
+    public Admin(string emails)
+    {
+        Emails = emails.Split(_emailsSeparator);
+    }
+
+    public string[] Emails { get; }
 }
