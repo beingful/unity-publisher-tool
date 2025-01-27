@@ -13,7 +13,8 @@ public static class AccessServiceInjection
         services
             .AddMicrosoftIdentityWebApiAuthentication(
                 configuration: configuration.GetSection("Authentication"),
-                configSectionName: "Google");
+                configSectionName: "Google",
+                jwtBearerScheme: JwtBearerDefaults.AuthenticationScheme);
 
         return services;
     }
