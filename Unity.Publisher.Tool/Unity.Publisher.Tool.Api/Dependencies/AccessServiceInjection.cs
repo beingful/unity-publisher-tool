@@ -1,8 +1,7 @@
 ﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.IdentityModel.Tokens;
+using Microsoft.Identity.Web;
 using Unity.Publisher.Tool.Access;
-using Unity.Publisher.Tool.Access.Options;
 using AuthorizationOptions = Unity.Publisher.Tool.Access.Options.AuthorizationOptions;
 
 namespace Unity.Publisher.Tool.Dependencies;
@@ -12,27 +11,9 @@ public static class AccessServiceInjection
     public static IServiceCollection AddAuthentication(this IServiceCollection services, IConfiguration configuration)
     {
         services
-            .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-            .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
-            {
-                GoogleAuthenticationOptions authOptions = configuration
-                    .GetSection(GoogleAuthenticationOptions.JsonKey)
-                    .Get<GoogleAuthenticationOptions>()!;
-
-                options.Audience = authOptions.ClientId;
-                options.Authority = authOptions.Issuer;
-
-                TokenValidationParameters tokenValidation = new()
-                {
-                    RequireAudience = true,
-                    RequireExpirationTime = true,
-                    RequireSignedTokens = true,
-                    ValidateAudience = true,
-                    ValidateIssuer = true,
-                    ValidateLifetime = true,
-                    ValidateIssuerSigningKey = true,
-                };
-            });
+            .AddMicrosoftIdentityWebApiAuthentication(
+                configuration: configuration.GetSection("Authentication"),
+                configSectionName: "Google");
 
         return services;
     }
