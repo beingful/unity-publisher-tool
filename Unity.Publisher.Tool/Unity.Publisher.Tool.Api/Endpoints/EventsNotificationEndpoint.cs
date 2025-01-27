@@ -33,6 +33,7 @@ public static class EventsNotificationEndpoint
                 Result = startNotificationResults
             });
         })
+        .RequireAuthorization()
         .Produces<PublisherActionResultResponse>();
 
         return endpoints;
@@ -53,6 +54,7 @@ public static class EventsNotificationEndpoint
                 Result = stopNotificationResults
             });
         })
+        .RequireAuthorization()
         .Produces<PublisherActionResultResponse>();
 
         return endpoints;

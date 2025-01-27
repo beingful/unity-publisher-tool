@@ -1,6 +1,6 @@
 ﻿namespace Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Options;
 
-public abstract class PublisherApiOptions
+public static class PublisherApiOptions
 {
-    public static string Path => "PublisherApi";
+    public static string JsonKey => "PublisherApi";
 }

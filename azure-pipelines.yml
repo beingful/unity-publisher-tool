@@ -77,9 +77,7 @@ steps:
     arguments: '--force-rm -t $(IMAGE) --build-arg IMAGE --build-arg BUILD_ID'
     Dockerfile: '**/final.Dockerfile'
     buildContext: $(DOCKER_BUILD_CONTEXT)
-    tags: |
-      $(FINAL_IMAGE_TAG)
-      build-$(BUILD_ID)
+    tags: $(FINAL_IMAGE_TAG)
   condition: and(succeeded(), eq(variables.IS_PR_RUN, false))
 
 - task: Docker@2
@@ -88,9 +86,7 @@ steps:
     containerRegistry: 'docker-hub'
     repository: $(REPOSITORY)
     command: 'push'
-    tags: |
-      $(FINAL_IMAGE_TAG)
-      build-$(BUILD_ID)
+    tags: $(FINAL_IMAGE_TAG)
   condition: and(succeeded(), eq(variables.IS_PR_RUN, false))
 
 - task: Docker@2

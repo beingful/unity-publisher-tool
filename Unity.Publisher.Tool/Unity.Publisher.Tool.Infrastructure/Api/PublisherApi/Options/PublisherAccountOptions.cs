@@ -2,7 +2,7 @@
 
 public class PublisherAccountOptions
 {
-    public static string Path => $"{PublisherApiOptions.Path}:Account";
+    public static string JsonKey => $"{PublisherApiOptions.JsonKey}:Account";
 
     public required string Email { get; init; }
 
