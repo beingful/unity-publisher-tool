@@ -41,8 +41,7 @@ public static class HomeEndpoints
             ");
 
             return Results.Ok(new { Value = headers + '\n' + claims });
-        })
-        .Produces<PublisherActionResultResponse>();
+        });
 
         return endpoints;
     }
