@@ -1,13 +1,9 @@
 ﻿using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Hangfire;
-using Hangfire.Redis.StackExchange;
-using StackExchange.Redis;
 using System.Text.Json.Serialization;
 using Unity.Publisher.Tool.Dependencies;
 using Unity.Publisher.Tool.Endpoints;
-using Unity.Publisher.Tool.Infrastructure.Db.Redis;
-using Unity.Publisher.Tool.Infrastructure.Scheduling.Hangfire.Attributes;
 
 namespace Unity.Publisher.Tool;
 
@@ -23,6 +19,8 @@ public class Startup
     public void ConfigureServices(IServiceCollection services)
     {
         services
+            .AddAuthentication(Configuration)
+            .AddAuthorization(Configuration)
             .ConfigureHttpJsonOptions(options =>
             {
                 options.SerializerOptions.Converters.Add(new JsonStringEnumConverter());
@@ -30,27 +28,7 @@ public class Startup
             })
             .AddEndpointsApiExplorer()
             .AddSwaggerGen()
-            .AddHangfire((sp, configuration) =>
-            {
-                string connectionString = Configuration.GetConnectionString(nameof(RedisDb))!;
-
-                configuration
-                    .UseRedisStorage(
-                        ConnectionMultiplexer.Connect(connectionString),
-                        new RedisStorageOptions
-                        {
-                            UseTransactions = false,
-                            DeletedListSize = 20,
-                            InvisibilityTimeout = TimeSpan.FromSeconds(30)
-                        })
-                    .UseFilter(new AutomaticRetryAttribute
-                    {
-                        Attempts = 0,
-                        OnAttemptsExceeded = AttemptsExceededAction.Delete
-                    })
-                    .UseFilter(new DeleteOnSuccessAttribute(seconds: 30));
-            })
-            .AddHangfireServer()
+            .AddScheduler(Configuration)
             .AddConfigurationOptions(Configuration);
     }
 
@@ -67,20 +45,22 @@ public class Startup
         app.UseSwagger();
         app.UseSwaggerUI();
 
-        app.UseHangfireDashboard();
-
         app.UseHttpsRedirection();
 
         app.UseRouting();
 
+        app.UseAuthentication();
+        app.UseAuthorization();
+
         app.UseEndpoints(endpoints =>
         {
             endpoints
-                .AddNotificationEndpoints()
-                .AddHomeEndpoints();
+                .AddHomeEndpoints()
+                .AddNotificationEndpoints();
         });
 
-        GlobalConfiguration.Configuration
-            .UseAutofacActivator(app.ApplicationServices.GetAutofacRoot());
+        app.UseDashboard(Configuration);
+
+        GlobalConfiguration.Configuration.UseAutofacActivator(app.ApplicationServices.GetAutofacRoot());
     }
 }

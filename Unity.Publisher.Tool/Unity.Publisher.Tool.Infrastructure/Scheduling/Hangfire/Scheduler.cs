@@ -9,10 +9,10 @@ namespace Unity.Publisher.Tool.Infrastructure.Scheduling.Hangfire;
 
 public class Scheduler : IScheduler
 {
-    private readonly SchedulingOptions _options;
+    private readonly SchedulerOptions _options;
     private readonly ILogger<Scheduler> _logger;
 
-    public Scheduler(IOptions<SchedulingOptions> options, ILogger<Scheduler> logger)
+    public Scheduler(IOptions<SchedulerOptions> options, ILogger<Scheduler> logger)
     {
         _options = options.Value;
         _logger = logger;
@@ -31,7 +31,7 @@ public class Scheduler : IScheduler
         }
         else if (SchedulePacked(jobs))
         {
-            throw new Exception(message: $"Schedule is packed with {_options.JobsLimit} jobs.");
+            throw new Exception(message: $"Schedule is packed with {_options.Capacity} jobs.");
         }
 
         RecurringJob.AddOrUpdate<TWorker>(
@@ -70,6 +70,6 @@ public class Scheduler : IScheduler
 
     private bool SchedulePacked(List<RecurringJobDto> jobs)
     {
-        return jobs.Count >= _options.JobsLimit;
+        return jobs.Count >= _options.Capacity;
     }
 }
