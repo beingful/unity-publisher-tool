@@ -186,6 +186,11 @@ public static class DomainServiceInjection
             .InstancePerBackgroundJob();
 
         container
+            .RegisterType<StatementUpdateHandler>()
+            .As<IStatementUpdateHandler>()
+            .InstancePerBackgroundJob();
+
+        container
             .Register<EnumBasedStringProvider<PublisherEvent>>(sp =>
             {
                 return new EnumBasedStringProvider<PublisherEvent>(key);
