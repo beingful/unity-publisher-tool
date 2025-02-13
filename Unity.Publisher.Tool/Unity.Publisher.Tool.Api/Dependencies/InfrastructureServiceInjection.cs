@@ -111,18 +111,42 @@ public static class InfrastructureServiceInjection
 
         container
             .RegisterType<PublisherApi>()
-            .As<IDataSource<PublisherInfo>>()
-            .As<IDataSource<Revenue>>()
-            .As<IDataSource<Assets>>()
-            .As<IDataSource<Sales>>()
-            .As<IDataSource<Reviews>>()
-            .As<IDataSource<Downloads>>()
-            .InstancePerBackgroundJob();
+            .As<IStartable>()
+            .InstancePerLifetimeScope();
 
         container
             .RegisterType<PublisherApi>()
-            .As<IStartable>()
+            .InstancePerBackgroundJob();
+
+        container
+            .RegisterType<PublisherAssetsApi>()
+            .As<IDataSource<Assets>>()
+            .InstancePerBackgroundJob();
+
+        container
+            .RegisterType<PublisherInfoApi>()
+            .As<IDataSource<PublisherInfo>>()
+            .InstancePerBackgroundJob();
+
+        container
+            .RegisterType<PublisherRevenueApi>()
+            .As<IDataSource<Revenue>>()
             .InstancePerLifetimeScope();
+
+        container
+            .RegisterType<PublisherSalesApi>()
+            .As<ITimeDependentDataSource<Sales>>()
+            .InstancePerBackgroundJob();
+
+        container
+            .RegisterType<PublisherReviewsApi>()
+            .As<ITimeDependentDataSource<Reviews>>()
+            .InstancePerBackgroundJob();
+
+        container
+            .RegisterType<PublisherDownloadsApi>()
+            .As<ITimeDependentDataSource<Downloads>>()
+            .InstancePerBackgroundJob();
 
         return container;
     }

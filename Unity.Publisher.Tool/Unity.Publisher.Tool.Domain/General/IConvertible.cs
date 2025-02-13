@@ -1,6 +1,6 @@
 ﻿namespace Unity.Publisher.Tool.Domain.General;
 
-public interface IConvertibleTo<TModel>
+public interface IConvertible<TModel>
 {
     TModel Convert();
 }

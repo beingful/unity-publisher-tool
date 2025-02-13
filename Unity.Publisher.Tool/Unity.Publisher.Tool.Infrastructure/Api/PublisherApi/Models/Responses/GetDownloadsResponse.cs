@@ -4,7 +4,7 @@ using Unity.Publisher.Tool.Domain.Publisher;
 
 namespace Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Models.Responses;
 
-internal sealed class GetDownloadsResponse : IConvertibleTo<Downloads>
+internal sealed class GetDownloadsResponse : IConvertible<Downloads>
 {
     [JsonPropertyName("aaData")]
     public required string[][] AssetDownloads { get; init; }

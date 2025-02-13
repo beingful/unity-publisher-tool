@@ -4,7 +4,7 @@ using Unity.Publisher.Tool.Domain.Publisher;
 
 namespace Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Models.Responses;
 
-internal sealed class GetPublisherOverviewResponse : IConvertibleTo<Rating>
+internal sealed class GetPublisherOverviewResponse : IConvertible<Rating>
 {
     [JsonPropertyName("overview")]
     public required Overview Overview { get; init; }

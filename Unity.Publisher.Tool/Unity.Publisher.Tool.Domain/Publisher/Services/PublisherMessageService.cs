@@ -1,31 +1,31 @@
 ﻿using Microsoft.Extensions.Logging;
 using Unity.Publisher.Tool.Domain.General;
 using Unity.Publisher.Tool.Domain.Notifications;
+using Unity.Publisher.Tool.Domain.Publisher.Services.Reports;
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Services;
 
-public abstract class PublisherReportingService<TData> : IPublisherReportingService
-    where TData : class
+public class PublisherMessageService<TData> : IPublisherMessageService where TData : class
 {
     private readonly IDataSource<TData> _dataSource;
-    private readonly PublisherDocumentExporter<TData> _documentExporter;
+    private readonly IPublisherDocumentExporter<TData> _documentExporter;
     private readonly ILogger _logger;
 
-    public PublisherReportingService(
+    public PublisherMessageService(
         IDataSource<TData> dataSource,
-        PublisherDocumentExporter<TData> documentExporter,
-        ILogger<PublisherReportingService<TData>> logger)
+        IPublisherDocumentExporter<TData> documentExporter,
+        ILogger<PublisherMessageService<TData>> logger)
     {
         _dataSource = dataSource;
         _documentExporter = documentExporter;
         _logger = logger;
     }
 
-    public async Task ReportAsync(Sender sender, Receiver receiver, CancellationToken cancellationToken = default)
+    public async Task MessageAsync(Sender sender, Receiver receiver, CancellationToken cancellationToken = default)
     {
-        TData data = await _dataSource.GetAsync();
+        TData data = await _dataSource.GetAsync(cancellationToken);
 
-        if (CanReport(data))
+        if (CanMessage(data))
         {
             await _documentExporter.ExportAsync(data, sender, receiver, cancellationToken);
         }
@@ -35,5 +35,8 @@ public abstract class PublisherReportingService<TData> : IPublisherReportingServ
         }
     }
 
-    protected abstract bool CanReport(TData data);
+    protected virtual bool CanMessage(TData data)
+    {
+        return true;
+    }
 }

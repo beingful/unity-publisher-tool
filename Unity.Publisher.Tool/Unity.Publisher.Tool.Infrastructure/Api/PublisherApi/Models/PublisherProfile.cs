@@ -11,4 +11,9 @@ internal sealed class PublisherProfile
         Id = id;
         Name = name;
     }
+
+    public static PublisherProfile Empty()
+    {
+        return new PublisherProfile(0, string.Empty);
+    }
 }

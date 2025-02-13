@@ -1,16 +1,16 @@
 ﻿using Unity.Publisher.Tool.Domain.General;
 
-namespace Unity.Publisher.Tool.Domain.Publisher.Services;
+namespace Unity.Publisher.Tool.Domain.Publisher.Services.Reports;
 
 public sealed class MonthlyReportService : IDataSource<PublisherReport>
 {
-    private readonly IPublisherStatementService _statementService;
+    private readonly IDataSource<PublisherStatement> _statementService;
     private readonly IDataSource<PublisherInfo> _publisherInfoSource;
     private readonly IDataSource<Revenue> _revenueSource;
     private readonly DateTime _timestamp;
 
     public MonthlyReportService(
-        IPublisherStatementService statementService,
+        IDataSource<PublisherStatement> statementService,
         IDataSource<PublisherInfo> publisherInfoSource,
         IDataSource<Revenue> revenueSource,
         DateTime timestamp)
@@ -21,11 +21,11 @@ public sealed class MonthlyReportService : IDataSource<PublisherReport>
         _timestamp = timestamp;
     }
 
-    public async Task<PublisherReport> GetAsync()
+    public async Task<PublisherReport> GetAsync(CancellationToken cancellationToken = default)
     {
-        Task<PublisherInfo> getPublisherTask = _publisherInfoSource.GetAsync();
-        Task<Revenue> getRevenueForAllPreviousPeriodsTask = _revenueSource.GetAsync();
-        Task<PublisherStatement> getPublisherStatementTask = _statementService.GetAsync();
+        Task<PublisherInfo> getPublisherTask = _publisherInfoSource.GetAsync(cancellationToken);
+        Task<Revenue> getRevenueForAllPreviousPeriodsTask = _revenueSource.GetAsync(cancellationToken);
+        Task<PublisherStatement> getPublisherStatementTask = _statementService.GetAsync(cancellationToken);
 
         PublisherStatement publisherStatement = await getPublisherStatementTask;
 

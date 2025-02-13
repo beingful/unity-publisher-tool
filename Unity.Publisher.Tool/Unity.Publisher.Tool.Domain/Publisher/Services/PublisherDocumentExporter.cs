@@ -4,7 +4,7 @@ using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Services;
 
-public class PublisherDocumentExporter<TData>
+public class PublisherDocumentExporter<TData> : IPublisherDocumentExporter<TData>
 {
     private readonly IDocumentBuilder<TData> _documentBuilder;
     private readonly INotificator _notificator;

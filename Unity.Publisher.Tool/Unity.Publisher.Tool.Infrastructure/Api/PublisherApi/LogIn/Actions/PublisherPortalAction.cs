@@ -8,18 +8,16 @@ namespace Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.LogIn.Actions;
 public class PublisherPortalAction
 {
     private readonly IHttpClient _httpClient;
-    private readonly GetSalesPageEndpoint _unityPortalPageEndpoint;
 
     public PublisherPortalAction(IHttpClient httpClient)
     {
         _httpClient = httpClient;
-        _unityPortalPageEndpoint = new GetSalesPageEndpoint();
     }
 
     public async Task<CallbackPageResult> RequestPageAsync(CancellationToken cancellationToken = default)
     {
         IHtmlHttpResponse bounceCallbackResponse = await _httpClient
-            .GetAsync<IHtmlHttpResponse>(_unityPortalPageEndpoint.Path(), cancellationToken);
+            .GetAsync<IHtmlHttpResponse>(PublisherApiEndpoints.SalesPage(), cancellationToken);
 
         return new CallbackPageResult(HtmlContent: bounceCallbackResponse.Content);
     }

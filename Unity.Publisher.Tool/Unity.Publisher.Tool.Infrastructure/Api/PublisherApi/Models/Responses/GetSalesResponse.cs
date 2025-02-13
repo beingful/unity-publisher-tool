@@ -6,7 +6,7 @@ using Unity.Publisher.Tool.Domain.Publisher;
 
 namespace Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Models.Responses;
 
-internal sealed class GetSalesResponse : IConvertibleTo<Sales>
+internal sealed class GetSalesResponse : IConvertible<Sales>
 {
     [JsonPropertyName("aaData")]
     public required string[][] Sales { get; init; }

@@ -5,7 +5,7 @@ using Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Models;
 
 namespace Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Models.Responses;
 
-internal sealed class GetPackagesResponse : IConvertibleTo<Assets>
+internal sealed class GetPackagesResponse : IConvertible<Assets>
 {
     [JsonPropertyName("packages")]
     public required Package[] Packages { get; init; }

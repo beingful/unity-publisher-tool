@@ -7,9 +7,9 @@ namespace Unity.Publisher.Tool.App.Services;
 public class MonthlyReportPerformer : PublisherEventNotificationPerformer
 {
     public MonthlyReportPerformer(
-        PublisherReportReportingService monthlyReportReportingService,
+        PublisherMessageService<PublisherReport> messageService,
         ILogger<MonthlyReportPerformer> logger)
-        : base(PublisherEvent.MonthlyReport, monthlyReportReportingService, logger)
+        : base(PublisherEvent.MonthlyReport, messageService, logger)
     {
     }
 }

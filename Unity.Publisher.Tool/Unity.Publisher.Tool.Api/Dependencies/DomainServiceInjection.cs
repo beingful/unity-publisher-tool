@@ -1,10 +1,14 @@
 ﻿using Autofac;
+using Autofac.Core;
 using Hangfire;
 using Unity.Publisher.Tool.Domain.General;
 using Unity.Publisher.Tool.Domain.Publisher;
 using Unity.Publisher.Tool.Domain.Publisher.Comparers;
 using Unity.Publisher.Tool.Domain.Publisher.Documents.Builders;
 using Unity.Publisher.Tool.Domain.Publisher.Services;
+using Unity.Publisher.Tool.Domain.Publisher.Services.Reports;
+using Unity.Publisher.Tool.Domain.Publisher.Services.Statements;
+using Unity.Publisher.Tool.Domain.Publisher.Services.Statements.Handlers;
 using Unity.Publisher.Tool.Domain.Storage;
 
 namespace Unity.Publisher.Tool.Dependencies;
@@ -29,6 +33,15 @@ public static class DomainServiceInjection
             {
                 return DateTime.UtcNow;
             })
+            .Keyed<DateTime>(PublisherEvent.StatementUpdate)
+            .InstancePerLifetimeScope();
+
+        container
+            .Register<DateTime>(context =>
+            {
+                return DateTime.UtcNow.AddMonths(-1);
+            })
+            .Keyed<DateTime>(PublisherEvent.MonthlyReport)
             .InstancePerLifetimeScope();
 
         return container;
@@ -121,14 +134,6 @@ public static class DomainServiceInjection
             .As<IDocumentBuilder<Download>>()
             .InstancePerBackgroundJob();
 
-        container
-            .RegisterType<PublisherDocumentExporter<PublisherStatement>>()
-            .InstancePerBackgroundJob();
-
-        container
-            .RegisterType<PublisherDocumentExporter<PublisherReport>>()
-            .InstancePerBackgroundJob();
-
         return container;
     }
 
@@ -177,12 +182,24 @@ public static class DomainServiceInjection
 
         container
             .RegisterType<PublisherDownloadlessStatementService>()
-            .As<IPublisherRefreshedStatementService>()
+            .WithParameter(new ResolvedParameter(
+                (parameterInfo, _) =>
+                {
+                    return parameterInfo.ParameterType == typeof(DateTime);
+                },
+                (_, context) =>
+                {
+                    return context.ResolveKeyed<DateTime>(PublisherEvent.StatementUpdate);
+                }))
             .InstancePerBackgroundJob();
 
         container
             .RegisterType<PublisherStoredStatementService>()
-            .As<IPublisherStoredStatementService>()
+            .InstancePerBackgroundJob();
+
+        container
+            .RegisterType<StatementUpdateHandler>()
+            .As<IStatementUpdateHandler>()
             .InstancePerBackgroundJob();
 
         container
@@ -194,12 +211,24 @@ public static class DomainServiceInjection
             .InstancePerLifetimeScope();
 
         container
-            .RegisterType<StatementUpdateService>()
+            .Register<StatementUpdateService>(sp =>
+            {
+                return new StatementUpdateService(
+                    storedStatementService: sp.Resolve<PublisherStoredStatementService>(),
+                    refreshedStatementService: sp.Resolve<PublisherDownloadlessStatementService>(),
+                    statementUpdateHandler: sp.Resolve<IStatementUpdateHandler>());
+            })
             .As<IDataSource<PublisherStatement>>()
             .InstancePerBackgroundJob();
 
         container
-            .RegisterType<PublisherStatementReportingService>()
+            .RegisterType<PublisherDocumentExporter<PublisherStatement>>()
+            .As<IPublisherDocumentExporter<PublisherStatement>>()
+            .InstancePerBackgroundJob();
+
+        container
+            .RegisterType<StatementUpdateMessageService>()
+            .As<PublisherMessageService<PublisherStatement>>()
             .InstancePerBackgroundJob();
 
         return container;
@@ -219,16 +248,36 @@ public static class DomainServiceInjection
 
         container
             .RegisterType<PublisherFullStatementService>()
-            .As<IPublisherStatementService>()
+            .WithParameter(new ResolvedParameter(
+                (parameterInfo, _) =>
+                {
+                    return parameterInfo.ParameterType == typeof(DateTime);
+                },
+                (_, context) =>
+                {
+                    return context.ResolveKeyed<DateTime>(PublisherEvent.MonthlyReport);
+                }))
             .InstancePerBackgroundJob();
 
         container
-            .RegisterType<MonthlyReportService>()
+            .Register<MonthlyReportService>(sp =>
+            {
+                return new MonthlyReportService(
+                    statementService: sp.Resolve<PublisherFullStatementService>(),
+                    publisherInfoSource: sp.Resolve<IDataSource<PublisherInfo>>(),
+                    revenueSource: sp.Resolve<IDataSource<Revenue>>(),
+                    timestamp: sp.ResolveKeyed<DateTime>(PublisherEvent.MonthlyReport));
+            })
             .As<IDataSource<PublisherReport>>()
             .InstancePerBackgroundJob();
 
         container
-            .RegisterType<PublisherReportReportingService>()
+            .RegisterType<PublisherDocumentExporter<PublisherReport>>()
+            .As<IPublisherDocumentExporter<PublisherReport>>()
+            .InstancePerBackgroundJob();
+
+        container
+            .RegisterType<PublisherMessageService<PublisherReport>>()
             .InstancePerBackgroundJob();
 
         return container;
