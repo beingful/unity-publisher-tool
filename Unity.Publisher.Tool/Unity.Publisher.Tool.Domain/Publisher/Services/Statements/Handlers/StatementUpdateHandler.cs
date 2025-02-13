@@ -7,8 +7,9 @@ public class StatementUpdateHandler : StatementUpdateBaseHandler
 {
     public StatementUpdateHandler(
         IDataComparer<PublisherStatement> dataComparer, IDataStorage dataStorage)
-        : base(new StatementUpdateStartingPointHandler(
-            dataStorage, new StatementUpdateDifferenceHandler(dataComparer, dataStorage)))
+        : base(new StatementUpdateStartingPointHandler(dataStorage,
+            new StatementUpdateNewMonthHandler(
+                new StatementUpdateDifferenceHandler(dataComparer, dataStorage))))
     {
     }
 }
