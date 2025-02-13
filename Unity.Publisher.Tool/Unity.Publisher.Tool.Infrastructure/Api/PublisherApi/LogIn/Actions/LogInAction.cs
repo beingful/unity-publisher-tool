@@ -8,20 +8,18 @@ namespace Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.LogIn.Actions;
 public sealed class LogInAction
 {
     private readonly IHttpClient _httpClient;
-    private readonly GetLogInPageEndpoint _logInEndpoint;
 
     private const string _authTokenName = "authenticity_token";
 
     public LogInAction(IHttpClient httpClient)
     {
         _httpClient = httpClient;
-        _logInEndpoint = new GetLogInPageEndpoint();
     }
 
     public async Task<LogInDataResult> GetPersonalizedDataAsync(CancellationToken cancellationToken = default)
     {
         using IHtmlHttpResponse loginHtmlPageResponse = await _httpClient
-            .GetAsync<IHtmlHttpResponse>(_logInEndpoint.Path(), cancellationToken);
+            .GetAsync<IHtmlHttpResponse>(PublisherApiEndpoints.LogInPage(), cancellationToken);
 
         string? authToken = FetchAuthenticityToken(loginHtmlPageResponse);
 

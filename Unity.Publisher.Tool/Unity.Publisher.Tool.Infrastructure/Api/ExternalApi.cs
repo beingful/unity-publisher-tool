@@ -7,38 +7,35 @@ namespace Unity.Publisher.Tool.Infrastructure.Api;
 
 public abstract class ExternalApi
 {
-    protected readonly ILogger Logger;
-
     private readonly IHttpClient _httpClient;
+    private readonly ILogger _logger;
 
     public ExternalApi(IHttpClient<ExternalApi> httpClient, ILogger<ExternalApi> logger)
     {
         _httpClient = httpClient;
-        Logger = logger;
+        _logger = logger;
     }
 
-    protected virtual async Task<TInternalModel> GetAsync<TExternalModel, TInternalModel>(
-        string endpoint, CancellationToken cancellationToken = default)
-        where TExternalModel : IConvertibleTo<TInternalModel>
+    internal virtual async Task<TInternalModel> GetAsync<TExternalModel, TInternalModel>(string endpoint, CancellationToken cancellationToken = default)
+        where TExternalModel : IConvertible<TInternalModel>
     {
         TExternalModel response = await GetAsync<TExternalModel>(endpoint, cancellationToken);
 
         return response.Convert();
     }
 
-    protected virtual async Task<TResponse> GetAsync<TResponse>(
-        string endpoint, CancellationToken cancellationToken = default)
+    internal virtual async Task<TResponse> GetAsync<TResponse>(string endpoint, CancellationToken cancellationToken = default)
     {
         try
         {
             using IJsonHttpResponse jsonResponse = await _httpClient
-                .GetAsync<IJsonHttpResponse>(endpoint);
+                .GetAsync<IJsonHttpResponse>(endpoint, cancellationToken);
 
             return await jsonResponse.ReadAs<TResponse>();
         }
         catch (Exception exception)
         {
-            Logger.LogError(exception, $"The error occured during GET {endpoint} request.");
+            _logger.LogError(exception, $"The error occured during GET {endpoint} request.");
 
             throw;
         }

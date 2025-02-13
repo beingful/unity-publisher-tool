@@ -4,7 +4,7 @@ using Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Models;
 
 namespace Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Models.Responses;
 
-internal class GetUserOverviewResponse : IConvertibleTo<PublisherProfile>
+internal class GetUserOverviewResponse : IConvertible<PublisherProfile>
 {
     [JsonPropertyName("publisher_id")]
     public required long Id { get; init; }

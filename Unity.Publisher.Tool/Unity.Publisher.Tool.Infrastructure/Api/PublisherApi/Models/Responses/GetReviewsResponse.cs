@@ -5,7 +5,7 @@ using Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Models;
 
 namespace Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Models.Responses;
 
-internal sealed class GetReviewsResponse : IConvertibleTo<Reviews>
+internal sealed class GetReviewsResponse : IConvertible<Reviews>
 {
     [JsonPropertyName("reviews")]
     public required AssetReview[] Reviews { get; init; }

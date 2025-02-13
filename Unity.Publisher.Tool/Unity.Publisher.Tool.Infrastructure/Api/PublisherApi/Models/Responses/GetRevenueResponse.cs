@@ -5,7 +5,7 @@ using Unity.Publisher.Tool.Infrastructure.Extensions;
 
 namespace Unity.Publisher.Tool.Infrastructure.Api.PublisherApi.Models.Responses;
 
-internal sealed class GetRevenueResponse : IConvertibleTo<Revenue>
+internal sealed class GetRevenueResponse : IConvertible<Revenue>
 {
     [JsonPropertyName("aaData")]
     public required string[][] MonthlyRevenue { get; init; }

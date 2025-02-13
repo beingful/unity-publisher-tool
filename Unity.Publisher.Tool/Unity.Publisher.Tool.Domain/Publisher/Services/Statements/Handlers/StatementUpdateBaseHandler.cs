@@ -1,4 +1,4 @@
-﻿namespace Unity.Publisher.Tool.Domain.Publisher.Services;
+﻿namespace Unity.Publisher.Tool.Domain.Publisher.Services.Statements.Handlers;
 
 public abstract class StatementUpdateBaseHandler : IStatementUpdateHandler
 {
@@ -9,7 +9,7 @@ public abstract class StatementUpdateBaseHandler : IStatementUpdateHandler
         _next = next;
     }
 
-    public virtual PublisherStatement Handle(PublisherStatement lastStatement, PublisherStatement newStatement)
+    public virtual PublisherStatement Handle(PublisherStatement newStatement, PublisherStatement lastStatement)
     {
         return _next?.Handle(lastStatement, newStatement) ?? PublisherStatement.Empty();
     }

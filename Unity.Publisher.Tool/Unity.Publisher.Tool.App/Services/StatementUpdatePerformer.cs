@@ -7,9 +7,9 @@ namespace Unity.Publisher.Tool.App.Services;
 public class StatementUpdatePerformer : PublisherEventNotificationPerformer
 {
     public StatementUpdatePerformer(
-        PublisherStatementReportingService statementUpdateReportingService,
+        PublisherMessageService<PublisherStatement> messageService,
         ILogger<StatementUpdatePerformer> logger)
-        : base(PublisherEvent.StatementUpdate, statementUpdateReportingService, logger)
+        : base(PublisherEvent.StatementUpdate, messageService, logger)
     {
     }
 }

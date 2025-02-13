@@ -1,8 +1,9 @@
-﻿using Unity.Publisher.Tool.Domain.Storage;
+﻿using Unity.Publisher.Tool.Domain.General;
+using Unity.Publisher.Tool.Domain.Storage;
 
-namespace Unity.Publisher.Tool.Domain.Publisher.Services;
+namespace Unity.Publisher.Tool.Domain.Publisher.Services.Statements;
 
-public class PublisherStoredStatementService : IPublisherStoredStatementService
+public class PublisherStoredStatementService : IDataSource<PublisherStatement>
 {
     private readonly IDataStorage _dataStorage;
 
@@ -11,7 +12,7 @@ public class PublisherStoredStatementService : IPublisherStoredStatementService
         _dataStorage = storage;
     }
 
-    public Task<PublisherStatement> GetAsync()
+    public Task<PublisherStatement> GetAsync(CancellationToken cancellationToken = default)
     {
         PublisherStatement storedStatementEntity =
             _dataStorage.Fetch<PublisherStatement>() ?? PublisherStatement.Empty();

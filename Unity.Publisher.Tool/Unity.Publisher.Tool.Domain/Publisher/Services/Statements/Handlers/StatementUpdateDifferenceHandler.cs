@@ -1,7 +1,7 @@
 ﻿using Unity.Publisher.Tool.Domain.General;
 using Unity.Publisher.Tool.Domain.Storage;
 
-namespace Unity.Publisher.Tool.Domain.Publisher.Services;
+namespace Unity.Publisher.Tool.Domain.Publisher.Services.Statements.Handlers;
 
 public class StatementUpdateDifferenceHandler : StatementUpdateBaseHandler
 {
@@ -17,15 +17,15 @@ public class StatementUpdateDifferenceHandler : StatementUpdateBaseHandler
         _dataStorage = dataStorage;
     }
 
-    public override PublisherStatement Handle(PublisherStatement lastStatement, PublisherStatement newStatement)
+    public override PublisherStatement Handle(PublisherStatement newStatement, PublisherStatement lastStatement)
     {
         PublisherStatement statementUpdate;
 
-        if (_dataComparer.Different(lastStatement, newStatement))
+        if (_dataComparer.Different(newStatement, lastStatement))
         {
             _dataStorage.Set(newStatement);
 
-            statementUpdate = _dataComparer.Difference(lastStatement, newStatement);
+            statementUpdate = _dataComparer.Difference(newStatement, lastStatement);
         }
         else
         {
