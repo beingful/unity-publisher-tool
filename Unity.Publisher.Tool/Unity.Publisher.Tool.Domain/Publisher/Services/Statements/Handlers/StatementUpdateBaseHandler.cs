@@ -2,7 +2,7 @@
 
 public abstract class StatementUpdateBaseHandler : IStatementUpdateHandler
 {
-    private IStatementUpdateHandler? _next;
+    private readonly IStatementUpdateHandler? _next;
 
     public StatementUpdateBaseHandler(IStatementUpdateHandler? next)
     {
@@ -11,6 +11,6 @@ public abstract class StatementUpdateBaseHandler : IStatementUpdateHandler
 
     public virtual PublisherStatement Handle(PublisherStatement newStatement, PublisherStatement lastStatement)
     {
-        return _next?.Handle(lastStatement, newStatement) ?? PublisherStatement.Empty();
+        return _next?.Handle(newStatement, lastStatement) ?? PublisherStatement.Empty();
     }
 }

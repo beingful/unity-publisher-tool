@@ -2,7 +2,7 @@
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Services.Statements.Handlers;
 
-public class StatementUpdateStartingPointHandler : StatementUpdateBaseHandler
+internal class StatementUpdateStartingPointHandler : StatementUpdateBaseHandler
 {
     private readonly IDataStorage _dataStorage;
 
@@ -17,7 +17,7 @@ public class StatementUpdateStartingPointHandler : StatementUpdateBaseHandler
     {
         PublisherStatement statementUpdate;
 
-        if (IsBaseline(lastStatement, newStatement))
+        if (lastStatement.IsEmpty)
         {
             _dataStorage.Set(newStatement);
 
@@ -25,15 +25,9 @@ public class StatementUpdateStartingPointHandler : StatementUpdateBaseHandler
         }
         else
         {
-            statementUpdate = base.Handle(lastStatement, newStatement);
+            statementUpdate = base.Handle(newStatement, lastStatement);
         }
 
         return statementUpdate;
-    }
-
-    private bool IsBaseline(PublisherStatement lastStatement, PublisherStatement newStatement)
-    {
-        return lastStatement.IsEmpty
-            || lastStatement.CreationTime.Month != newStatement.CreationTime.Month;
     }
 }

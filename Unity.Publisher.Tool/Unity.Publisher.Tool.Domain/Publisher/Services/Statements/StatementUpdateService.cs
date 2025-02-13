@@ -22,11 +22,11 @@ public class StatementUpdateService : IDataSource<PublisherStatement>
     public async Task<PublisherStatement> GetAsync(CancellationToken cancellationToken = default)
     {
         PublisherStatement[] statements = await Task.WhenAll(
-            _storedStatementService.GetAsync(cancellationToken),
-            _refreshedStatementService.GetAsync(cancellationToken));
+            _refreshedStatementService.GetAsync(cancellationToken),
+            _storedStatementService.GetAsync(cancellationToken));
 
         return _statementUpdateHandler.Handle(
-            lastStatement: statements.First(),
-            newStatement: statements.Last());
+            newStatement: statements.First(),
+            lastStatement: statements.Last());
     }
 }

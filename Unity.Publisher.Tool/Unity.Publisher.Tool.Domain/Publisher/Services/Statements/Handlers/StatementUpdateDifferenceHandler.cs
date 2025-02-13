@@ -3,7 +3,7 @@ using Unity.Publisher.Tool.Domain.Storage;
 
 namespace Unity.Publisher.Tool.Domain.Publisher.Services.Statements.Handlers;
 
-public class StatementUpdateDifferenceHandler : StatementUpdateBaseHandler
+internal class StatementUpdateDifferenceHandler : StatementUpdateBaseHandler
 {
     private readonly IDataComparer<PublisherStatement> _dataComparer;
     private readonly IDataStorage _dataStorage;
@@ -29,7 +29,7 @@ public class StatementUpdateDifferenceHandler : StatementUpdateBaseHandler
         }
         else
         {
-            statementUpdate = base.Handle(lastStatement, newStatement);
+            statementUpdate = base.Handle(newStatement, lastStatement);
         }
 
         return statementUpdate;
